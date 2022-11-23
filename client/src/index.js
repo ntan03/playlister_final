@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+
+import './fonts/Satisfy/Satisfy-Regular.ttf';
 /*
   This is the entry-point for our application. Notice that we
   inject our store into all the components in our application.

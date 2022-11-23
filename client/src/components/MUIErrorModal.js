@@ -3,6 +3,7 @@ import GlobalStoreContext from '../store';
 import * as React from 'react';
 import Modal from '@mui/material/Modal';
 import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import AuthContext from '../auth'
@@ -12,11 +13,9 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    height: 200,
     width: 400,
-    border: '5px solid yellow',
-    fontSize: "20px",
-    p: 4
+    border: '2px solid #000',
+    boxShadow: 24
 };
 
 
@@ -30,10 +29,16 @@ export default function MUIErrorModal() {
     }
 
     return (
-        <Modal open = {auth.errorMessage !== null}>
-         <Alert sx={style} severity="warning">{auth.errorMessage}
-         <Button sx={{color:"black", mt:"20px", ml:"85px", fontSize: 13, fontWeight: 'bold', border: 2}}variant="outlined" onClick={handleCloseButton}>Close</Button>
-         </Alert>
+        <Modal open={auth.errorMessage !== null}>
+            <Box sx={style}>
+                <Alert severity="error">
+                    <AlertTitle>Account Error</AlertTitle>
+                    {auth.errorMessage}
+                    <div id="close-button">
+                        <Button variant="text" onClick={handleCloseButton}>Close</Button>
+                    </div>
+                </Alert>
+            </Box> 
         </Modal>
     );
 }

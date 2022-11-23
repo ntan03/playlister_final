@@ -48,8 +48,8 @@ export default function AppBanner() {
             id={menuId}
             keepMounted
             transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
+                vertical: -50,
+                horizontal: 10,
             }}
             open={isMenuOpen}
             onClose={handleMenuClose}
@@ -68,8 +68,8 @@ export default function AppBanner() {
             id={menuId}
             keepMounted
             transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
+                vertical: -50,
+                horizontal: 10,
             }}
             open={isMenuOpen}
             onClose={handleMenuClose}
@@ -100,12 +100,14 @@ export default function AppBanner() {
             <AppBar position="static">
                 <Toolbar>
                     <Typography                        
-                        variant="h4"
+                        variant="h2"
                         noWrap
                         component="div"
                         sx={{ display: { xs: 'none', sm: 'block' } }}                        
                     >
-                        <Link onClick={handleHouseClick} style={{ textDecoration: 'none', color: 'white' }} to='/'>⌂</Link>
+                        <div id='logo'>
+                            <Link onClick={handleHouseClick} style={{ textDecoration: 'none', color: 'white' }} to='/'>Playlister</Link>
+                        </div>
                     </Typography>
                     <Box sx={{ flexGrow: 1 }}>{editToolbar}</Box>
                     <Box sx={{ height: "90px", display: { xs: 'none', md: 'flex' } }}>

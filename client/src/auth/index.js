@@ -17,6 +17,7 @@ function AuthContextProvider(props) {
     const [auth, setAuth] = useState({
         user: null,
         loggedIn: false,
+        guest: false,
         errorMessage: null
     });
     const history = useHistory();

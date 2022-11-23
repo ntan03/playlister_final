@@ -14,6 +14,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
+import AppBanner from './AppBanner';
+
 export default function RegisterScreen() {
     const { auth } = useContext(AuthContext);
 
@@ -37,6 +39,8 @@ export default function RegisterScreen() {
     console.log(modalJSX);
 
     return (
+        <div>
+            <AppBanner />
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
                 <Box
@@ -129,5 +133,6 @@ export default function RegisterScreen() {
                 <Copyright sx={{ mt: 5 }} />
                 { modalJSX }
             </Container>
+        </div>
     );
 }
