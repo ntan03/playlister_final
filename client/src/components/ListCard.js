@@ -78,7 +78,7 @@ function ListCard(props) {
         cardStatus = true;
     }
     let cardElement =
-        <Box sx={{ p: 1, display: 'flex', flexDirection: 'row', flexGrow: 1, height: '15%', width: '95%' }}>
+        <Box sx={{ p: 1, display: 'flex', flexDirection: 'row', flexGrow: 1, height: '15%'}}>
             <ListItem
                 id={idNamePair._id}
                 key={idNamePair._id}
