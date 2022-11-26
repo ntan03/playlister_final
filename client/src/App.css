@@ -179,15 +179,22 @@
 #homescreen {
   display: grid;
   grid-template-columns: 60% 40%;
-  grid-gap: 10px;
-  background-color: white;
+}
+
+.community-toolbar {
+  display: grid;
+  grid-template-columns: 25% 55% 20%;
+}
+
+.sort-tag {
+  color: #4d4d4d;
 }
 
 #playlister-list-selector {
   display: flex;
   flex-direction: row;
   grid-column: 1/2;
-  max-height: 70%;
+  max-height: 65%;
 }
 
 #list-selector-list {
