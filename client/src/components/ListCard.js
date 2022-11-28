@@ -78,16 +78,16 @@ function ListCard(props) {
         cardStatus = true;
     }
     let cardElement =
-        <Box sx={{ p: 1, display: 'flex', flexDirection: 'row', flexGrow: 1, height: '15%'}}>
+        <Box sx={{ p: 1, display: 'flex', flexDirection: 'row', flexGrow: 1, height: '10%'}}>
             <ListItem
                 id={idNamePair._id}
                 key={idNamePair._id}
-                sx={{borderRadius:"25px", p: "10px", bgcolor: '#8000F00F', marginTop: '15px', display: 'flex', p: 1 }}
+                sx={{borderRadius:"25px", p: "10px", bgcolor: '#8000F00F', marginTop: '15px', display: 'flex', p: 2 }}
                 style={{transform:"translate(1%,0%)", width: '98%'}}
                 button
-                // onClick={(event) => {
-                //     handleLoadList(event, idNamePair._id)
-                // }}
+                onClick={(event) => {
+                    handleLoadList(event, idNamePair._id)
+                }}
             >
                 <Box sx={{ p: 1, display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
                     <div className="list-name">
@@ -99,7 +99,7 @@ function ListCard(props) {
                     <div className="list-details">
                     </div>
                 </Box>
-                <Box sx={{ p: 1, display: 'flex', justifyContent: 'flex-end', flexDirection: 'column', flexGrow: 1, margin: '-10px'}}>
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: 'column', flexGrow: 1, margin: '-10px'}}>
                     <Box sx={{ p: 1, display: 'flex', justifyContent: 'flex-end', flexDirection: 'row', flexGrow: 1, marginBottom: '-10px' }}>
                         <Box sx={{ p: 1 }}>
                             <IconButton aria-label='like'>

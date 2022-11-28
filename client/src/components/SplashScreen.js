@@ -31,10 +31,6 @@ const links = {
 }
 
 export default function SplashScreen() {
-    const login = () => {
-        
-    }
-
     return (
         <div id="splash-screen">
             <div id="playlister">
