@@ -39,7 +39,7 @@ export default function LoginScreen() {
     console.log(modalJSX);
 
     return (
-        <div>
+        <Box>
             <AppBanner />
             <Grid container component="main" sx={{ height: '100vh' }}>
                 <CssBaseline />
@@ -115,6 +115,6 @@ export default function LoginScreen() {
                 </Grid>
                 { modalJSX }
             </Grid>
-        </div>
+        </Box>
     );
 }

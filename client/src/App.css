@@ -22,47 +22,20 @@
    url("./fonts/Satisfy/Satisfy-Regular.ttf") format("truetype");
 }
 
-/* body {
-  background-image: url('https://thumbs.dreamstime.com/b/music-notes-symbols-seamless-pattern-design-fully-editable-fill-background-color-music-notes-symbols-seamless-pattern-118273669.jpg')
-} */
+body {
+  /* background-image: url('https://thumbs.dreamstime.com/b/music-notes-symbols-seamless-pattern-design-fully-editable-fill-background-color-music-notes-symbols-seamless-pattern-118273669.jpg') */
+  margin: 0;
+}
 
 #root {
   background-color: var(--swatch-primary);
   font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-  position: absolute;
-  width: 80%;
-  left: 10%;
-  height: 100%;
-  top: 5%;
-}
-
-#app-root {
-  position: absolute;
   width: 100%;
-  height: 100%;
-  top: 0%;
-  left: 0%;
-}
-
-#playlister-banner {
-  position: absolute;
-  left: 0%;
-  top: 0%;
-  width: 100%;
-  height: 10%;
-  float: left;
-  background-image: linear-gradient(to bottom, #b8b808, #636723);
-  color: white;
-  font-size: 48pt;
-  border-color: black;
-  border-width: 2px;
-  border-style: solid;
-  border-radius: 10px;
+  height: 100vh;
 }
 
 #logo {
   font-family: "Satisfy";
-  /* font-size: 3vw; */
 }
 
 #splash-screen {
@@ -72,13 +45,14 @@
   color: white;
   font-size: 6vw;
   font-family: "Satisfy";
-  border-color: black;
+  /* border-color: black;
   border-width: 5px;
   border-style: solid;
-  border-radius: 2px;
+  border-radius: 2px; */
   padding-top: 1%;
-  padding-bottom: 14%;
-  height:75%;
+  /* padding-bottom: 14%; */
+  width: 100%;
+  height:100%;
   text-align: center;
   vertical-align: center;
 }
@@ -148,15 +122,14 @@
 
 #playlister-statusbar {
   position: relative;
-  /* left: 0%;
-  top: 90%;
-  width: 100%;
-  height: 10%; */
+  height: 100;
+  color: white;
   background-color: #1976d2;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 50pt;
+  padding: 10px;
 }
 
 #list-selector-heading {
@@ -254,7 +227,7 @@
 }
 
 .unselected-list-card {
-  background-color: #d6c4d8;
+  background-color: #e3e3e3;
 }
 
 .list-card-button {

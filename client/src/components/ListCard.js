@@ -1,15 +1,24 @@
-import { useContext, useState } from 'react'
+import { useContext, useState, useEffect } from 'react'
 import { GlobalStoreContext } from '../store'
 import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import CardContent from '@mui/material/CardContent';
+import Collapse from '@mui/material/Collapse';
+
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
-import IconButton from '@mui/material/IconButton';
+import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import ListItem from '@mui/material/ListItem';
 import TextField from '@mui/material/TextField';
+
+import Songs from './Songs';
 
 /*
     This is a card in our list of top 5 lists. It lets select
@@ -21,8 +30,17 @@ import TextField from '@mui/material/TextField';
 function ListCard(props) {
     const { store } = useContext(GlobalStoreContext);
     const [editActive, setEditActive] = useState(false);
+    const [ expanded, setExpanded ] = useState(false);
     const [text, setText] = useState("");
     const { idNamePair, selected } = props;
+
+    useEffect(() => {
+        if (expanded) {
+            store.setCurrentList(idNamePair._id);
+        } else {
+            store.closeCurrentList();
+        }
+    }, [expanded])
 
     function handleLoadList(event, id) {
         console.log("handleLoadList for " + id);
@@ -35,6 +53,12 @@ function ListCard(props) {
 
             // CHANGE THE CURRENT LIST
             store.setCurrentList(id);
+        }
+    }
+
+    function handleClick(event) {
+        if (event.detail == 2) {
+            handleToggleEdit(event);
         }
     }
 
@@ -61,6 +85,7 @@ function ListCard(props) {
     function handleKeyPress(event) {
         if (event.code === "Enter") {
             let id = event.target.id.substring("list-".length);
+            console.log('text: ', text);
             store.changeListName(id, text);
             toggleEdit();
         }
@@ -68,6 +93,10 @@ function ListCard(props) {
     function handleUpdateText(event) {
         setText(event.target.value);
     }
+
+    function handleExpandClick (event) {
+        setExpanded(!expanded);
+    };
 
     let selectClass = "unselected-list-card";
     if (selected) {
@@ -77,77 +106,92 @@ function ListCard(props) {
     if (store.isListNameEditActive) {
         cardStatus = true;
     }
-    let cardElement =
-        <Box sx={{ p: 1, display: 'flex', flexDirection: 'row', flexGrow: 1, height: '10%'}}>
-            <ListItem
-                id={idNamePair._id}
-                key={idNamePair._id}
-                sx={{borderRadius:"25px", p: "10px", bgcolor: '#8000F00F', marginTop: '15px', display: 'flex', p: 2 }}
-                style={{transform:"translate(1%,0%)", width: '98%'}}
-                button
-                onClick={(event) => {
-                    handleLoadList(event, idNamePair._id)
-                }}
-            >
-                <Box sx={{ p: 1, display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                    <div className="list-name">
-                        {idNamePair.name}
-                    </div>
-                    <div className="list-details">
-                        By: Nelson Tan
-                    </div>
-                    <div className="list-details">
-                    </div>
-                </Box>
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: 'column', flexGrow: 1, margin: '-10px'}}>
-                    <Box sx={{ p: 1, display: 'flex', justifyContent: 'flex-end', flexDirection: 'row', flexGrow: 1, marginBottom: '-10px' }}>
-                        <Box sx={{ p: 1 }}>
-                            <IconButton aria-label='like'>
-                                <ThumbUpIcon style={{fontSize:'24pt'}} />
-                            </IconButton>
-                        </Box>
-                        <Box sx={{ p: 1 }}>
-                            <IconButton aria-label='dislike'>
-                                <ThumbDownIcon style={{fontSize:'24pt'}} />
-                            </IconButton>
-                        </Box>
-                    </Box>
-                    <Box sx={{ p: 1, display: 'flex', justifyContent: 'flex-end', flexDirection: 'row', flexGrow: 1 }}>
-                        <div className="list-details">
-                            Listens: 
-                        </div>
-                        <Box sx={{ p: 1, alignSelf: 'flex-end', marginLeft: '10px', marginBottom: '10px', marginTop: '-20px' }}>
-                            <IconButton aria-label='expand'>
-                                <KeyboardDoubleArrowDownIcon style={{fontSize:'24pt'}} />
-                            </IconButton>
-                        </Box>
-                    </Box>
-                </Box>
-            </ListItem>
-        </Box>
 
+    let arrowIcon = <KeyboardDoubleArrowDownIcon style={{fontSize:'24pt'}}/>;
+    if (expanded) {
+        arrowIcon = <KeyboardDoubleArrowUpIcon style={{fontSize:'24pt'}}/>
+    }
+
+    let playlistName = idNamePair.name;
     if (editActive) {
-        cardElement =
+        playlistName = 
             <TextField
                 margin="normal"
                 required
                 fullWidth
                 id={"list-" + idNamePair._id}
-                label="Playlist Name"
                 name="name"
                 autoComplete="Playlist Name"
                 className='list-card'
                 onKeyPress={handleKeyPress}
                 onChange={handleUpdateText}
                 defaultValue={idNamePair.name}
-                inputProps={{style: {fontSize: 48}}}
+                inputProps={{style: {fontSize: 24}}}
                 InputLabelProps={{style: {fontSize: 24}}}
                 autoFocus
             />
     }
     return (
-        cardElement
-    );
+        <Box sx={{ p: 1, flexGrow: 1}}>
+            <ListItem
+                id={idNamePair._id}
+                key={idNamePair._id}
+                sx={{borderRadius:"25px", p: "5px", bgcolor: '#cdcdcd', display: 'grid', gridTemplateRows: '33% 33% 33%', gridTemplateColumns: '55% 45%' }}
+                style={{transform:"translate(1%,0%)", width: '98%', height: '100%'}}
+                onClick={handleClick}
+            >
+                <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', flexGrow: 1, gridRow: '1/3', gridColumn: '1/2', alignSelf: 'start' }}>
+                    <div className="list-name">
+                        {playlistName}
+                    </div>
+                    <div className="list-details">
+                        By: Nelson Tan
+                    </div>
+                    <div className="list-details">
+                        Publish Date: 
+                    </div>
+                </Box>
+                <Box sx={{ p: 1, display: 'flex', justifyContent: 'flex-end', flexDirection: 'row', gridRow: '1/2', gridColumn: '2/3'}}>
+                    <Box sx={{ p: 1 }}>
+                        <IconButton aria-label='like'>
+                            <ThumbUpIcon style={{fontSize:'24pt'}} />
+                        </IconButton>
+                    </Box>
+                    <Box sx={{ p: 1 }}>
+                        <IconButton aria-label='dislike'>
+                            <ThumbDownIcon style={{fontSize:'24pt'}} />
+                        </IconButton>
+                    </Box>
+                </Box>
+                <Box sx={{ p: 1, display: 'flex', justifyContent: 'flex-end', flexDirection: 'row', gridRow: '2/3', gridColumn: '2/3' }}>
+                    <div className="list-details">
+                        Listens: 
+                    </div>
+                    <Box sx={{}}>
+                        <IconButton aria-label='expand' onClick={(event) => {
+                                    handleExpandClick(event);
+                                }}>
+                            {arrowIcon}
+                        </IconButton>
+                    </Box>
+                </Box>
+                <Collapse in={expanded} timeout="auto" unmountOnExit>
+                    <Box sx={{ p: 1, gridColumn: '1/3', width: '180%' }}>
+                        <Songs />
+                        <Box sx={{ p: 1, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Box>
+                                <Button variant="text">Undo</Button>
+                                <Button variant="text">Redo</Button>
+                            </Box>
+                            <Box>
+                                <Button variant="outlined">Duplicate</Button>
+                            </Box>
+                        </Box>
+                    </Box>
+                </Collapse>
+            </ListItem>
+        </Box>
+    )
 }
 
 export default ListCard;

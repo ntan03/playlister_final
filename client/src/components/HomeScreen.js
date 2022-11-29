@@ -12,10 +12,10 @@ import Tab from '@mui/material/Tab';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
 import HomeIcon from '@mui/icons-material/Home';
 import GroupsIcon from '@mui/icons-material/Groups';
 import PersonIcon from '@mui/icons-material/Person';
-import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
 import SortIcon from '@mui/icons-material/Sort';
 
@@ -54,7 +54,7 @@ const HomeScreen = () => {
     let listCard = "";
     if (store) {
         listCard = 
-            <List sx={{width: '100%', bgcolor: 'background.paper', mb:"20px" }}>
+            <List sx={{ bgcolor: 'background.paper', mb:"20px" }}>
             {
                 store.idNamePairs.map((pair) => (
                     <ListCard
@@ -74,7 +74,7 @@ const HomeScreen = () => {
             </Box>
             <Box sx={{ gridRow: '2/3', gridColumn: '1/3' }}>
                 <AppBar position="static" sx={{ bgcolor: '#cdcdcd' }}>
-                    <Toolbar sx={{ display: 'grid', gridTemplateColumns: '10% 55% 22% 8% 5%'}}>
+                    <Toolbar sx={{ display: 'grid', gridTemplateColumns: '10% 55% 25% 5% 5%'}}>
                         <Box sx={{ gridColumn: '1/2' }}>
                             <IconButton>
                                 <HomeIcon></HomeIcon>
@@ -101,7 +101,7 @@ const HomeScreen = () => {
                 </AppBar>
             </Box>
 
-            <Box sx={{ bgcolor:"background.paper", gridRow: '3/4', gridColumn: '1/2' }} id="list-selector-list">
+            <Box sx={{ bgcolor:"background.paper", gridRow: '3/4', gridColumn: '1/2', display: 'flex', flexDirection: 'column', overflow: 'scroll' }}>
                 {
                     listCard
                 }

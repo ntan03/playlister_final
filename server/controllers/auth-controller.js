@@ -97,14 +97,28 @@ logoutUser = async (req, res) => {
 registerUser = async (req, res) => {
     console.log("REGISTERING USER IN BACKEND");
     try {
-        const { firstName, lastName, email, password, passwordVerify } = req.body;
+        const { userName, firstName, lastName, email, password, passwordVerify } = req.body;
         console.log("create user: " + firstName + " " + lastName + " " + email + " " + password + " " + passwordVerify);
-        if (!firstName || !lastName || !email || !password || !passwordVerify) {
+        if (!userName || !firstName || !lastName || !email || !password || !passwordVerify) {
             return res
                 .status(400)
                 .json({ errorMessage: "Please enter all required fields." });
         }
         console.log("all fields provided");
+        if (userName.length < 4) {
+            return res
+                .status(400)
+                .json({
+                    errorMessage: "Please enter a username of at least 4 characters."
+                });
+        }
+        if (!(/^[A-Za-z0-9]+$/.test(userName))) {
+            return res
+                .status(400)
+                .json({
+                    errorMessage: "Please ensure that the username only consists of letters and numbers."
+                });
+        }
         if (password.length < 8) {
             return res
                 .status(400)
@@ -121,9 +135,8 @@ registerUser = async (req, res) => {
                 })
         }
         console.log("password and password verify match");
-        const existingUser = await User.findOne({ email: email });
-        console.log("existingUser: " + existingUser);
-        if (existingUser) {
+        const existingEmail = await User.findOne({ email: email });
+        if (existingEmail) {
             return res
                 .status(400)
                 .json({
@@ -132,12 +145,22 @@ registerUser = async (req, res) => {
                 })
         }
 
+        const existingUser = await User.findOne({ userName: userName });
+        if (existingUser) {
+            return res
+                .status(400)
+                .json({
+                    success: false,
+                    errorMessage: "An account with this username already exists."
+                })
+        }
+
         const saltRounds = 10;
         const salt = await bcrypt.genSalt(saltRounds);
         const passwordHash = await bcrypt.hash(password, salt);
         console.log("passwordHash: " + passwordHash);
 
-        const newUser = new User({firstName, lastName, email, passwordHash});
+        const newUser = new User({userName, firstName, lastName, email, passwordHash});
         const savedUser = await newUser.save();
         console.log("new user saved: " + savedUser._id);
 
