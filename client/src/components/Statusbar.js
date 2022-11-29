@@ -34,7 +34,7 @@ function Statusbar() {
                         color="primary" 
                         aria-label="add"
                         id="add-list-button"
-                        disabled="true"
+                        disabled={true}
                         onClick={handleCreateNewList}
                     >
                         <AddIcon />

@@ -23,19 +23,27 @@ function Songs() {
     let list = '';
     if (store.currentList) {
         console.log(store.currentList.songs)
+        let temp = [...store.currentList.songs]
+        temp.push('Add List')
         list =
             <List sx={{overflow: 'scroll', bgcolor: '#d6d6d6' }}>
                 {
-                    store.currentList.songs.map((song, index) => (
+                    temp.map((song, index) => (
+                        (index < temp.length - 1) ?
                         <SongCard
                             id={'playlist-song-' + (index)}
                             key={'playlist-song-' + (index)}
                             index={index}
                             song={song}
+                        /> 
+                        :
+                        <AddSongCard 
+                            key={'playlist-song-' + (index)}
+                            index={index}
                         />
                     ))
-                    // <AddSongCard />
                 }
+                { modalJSX }
             </List>            
     }
 

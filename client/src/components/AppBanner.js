@@ -81,9 +81,9 @@ export default function AppBanner() {
     let menu = loggedOutMenu;
     if (auth.loggedIn) {
         menu = loggedInMenu;
-        if (store.currentList) {
-            editToolbar = <EditToolbar />;
-        }
+        // if (store.currentList) {
+        //     editToolbar = <EditToolbar />;
+        // }
     }
     
     function getAccountMenu(loggedIn) {
@@ -98,7 +98,7 @@ export default function AppBanner() {
     return (
         <Box sx={{flexGrow: 1}}>
             <AppBar position="static">
-                <Toolbar>
+                <Toolbar sx={{ bgcolor: '#35bcfc' }}>
                     <Typography                        
                         variant="h2"
                         noWrap

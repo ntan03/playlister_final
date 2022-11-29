@@ -176,7 +176,7 @@ function ListCard(props) {
                     </Box>
                 </Box>
                 <Collapse in={expanded} timeout="auto" unmountOnExit>
-                    <Box sx={{ p: 1, gridColumn: '1/3', width: '180%' }}>
+                    <Box sx={{ p: 1, gridColumn: '1/3', width: '180%', textAlign: 'center' }}>
                         <Songs />
                         <Box sx={{ p: 1, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                             <Box>

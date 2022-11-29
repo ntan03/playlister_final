@@ -4,19 +4,27 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 
-function AddSongCard() {
+function AddSongCard(props) {
     const { store } = useContext(GlobalStoreContext);
+    const { index } = props;
 
     function handleAddNewSong() {
         store.addNewSong();
     }
 
+    let cardClass = "add-song-card";
     return (
-        <Box sx={{width: 100}} onClick={handleAddNewSong}>
-            <IconButton>
-                <AddIcon />
-            </IconButton>
-        </Box>
+        // <Box sx={{width: 100}} onClick={handleAddNewSong}>
+        //     <IconButton>
+        //         <AddIcon />
+        //     </IconButton>
+        // </Box>
+        <IconButton
+            sx={{ fontSize: '18pt', margin: '10px', padding: '20px', borderRadius: '25px', bgcolor: '#6e9ff4', textAlign: 'center'}}
+            onClick={handleAddNewSong}
+            >
+            <AddIcon />
+        </IconButton>
     );
 }
 
