@@ -1,18 +1,13 @@
 import { useContext, useState, useEffect } from 'react'
 import { GlobalStoreContext } from '../store'
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardContent from '@mui/material/CardContent';
 import Collapse from '@mui/material/Collapse';
 
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
+// import DeleteIcon from '@mui/icons-material/Delete';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import ListItem from '@mui/material/ListItem';
@@ -35,12 +30,14 @@ function ListCard(props) {
     const { idNamePair, selected } = props;
 
     useEffect(() => {
-        if (store.currentList && store.currentList._id == idNamePair._id) setExpanded(true);
+        if (store.currentList && store.currentList._id === idNamePair._id) setExpanded(true);
         else setExpanded(false);
     }, [store.currentList])
 
     function handleLoadList(event, id) {
         console.log("handleLoadList for " + id);
+        event.preventDefault();
+        event.stopPropagation();
         if (!event.target.disabled) {
             let _id = event.target.id;
             if (_id.indexOf('list-card-text-') >= 0)
@@ -90,6 +87,16 @@ function ListCard(props) {
     }
     function handleUpdateText(event) {
         setText(event.target.value);
+    }
+    function handleUndo(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        store.undo();
+    }
+    function handleRedo(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        store.redo();
     }
 
     let selectClass = "unselected-list-card";
@@ -174,8 +181,8 @@ function ListCard(props) {
                         <Songs />
                         <Box sx={{ p: 1, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                             <Box>
-                                <Button variant="text">Undo</Button>
-                                <Button variant="text">Redo</Button>
+                                <Button variant="text" onClick={(event) => {handleUndo(event);}}>Undo</Button>
+                                <Button variant="text" onClick={(event) => {handleRedo(event);}}>Redo</Button>
                             </Box>
                             <Box>
                                 <Button variant="outlined">Duplicate</Button>

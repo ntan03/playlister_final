@@ -1,18 +1,15 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react'
 import { GlobalStoreContext } from '../store'
-import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 
 function AddSongCard(props) {
     const { store } = useContext(GlobalStoreContext);
-    const { index } = props;
 
     function handleAddNewSong() {
         store.addNewSong();
     }
 
-    let cardClass = "add-song-card";
     return (
         // <Box sx={{width: 100}} onClick={handleAddNewSong}>
         //     <IconButton>

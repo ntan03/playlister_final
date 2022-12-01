@@ -48,7 +48,6 @@ function Statusbar() {
             <div id="playlister-statusbar">
                 <div id="list-selector-heading">
                     <Fab sx={{transform:"translate(-20%, 0%)"}}
-                        color="primary" 
                         aria-label="add"
                         id="add-list-button"
                         onClick={handleCreateNewList}

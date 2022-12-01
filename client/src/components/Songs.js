@@ -1,10 +1,9 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext } from 'react'
 import { useHistory } from 'react-router-dom'
 import SongCard from './SongCard.js'
 import AddSongCard from './AddSongCard.js'
 import MUIEditSongModal from './MUIEditSongModal'
 import MUIRemoveSongModal from './MUIRemoveSongModal'
-import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import { GlobalStoreContext } from '../store/index.js'
 
