@@ -26,7 +26,7 @@ function Songs() {
         let temp = [...store.currentList.songs]
         temp.push('Add List')
         list =
-            <List sx={{overflow: 'scroll', bgcolor: '#d6d6d6' }}>
+            <List sx={{overflow: 'auto', maxHeight: 300, bgcolor: '#cdcdcd' }}>
                 {
                     temp.map((song, index) => (
                         (index < temp.length - 1) ?

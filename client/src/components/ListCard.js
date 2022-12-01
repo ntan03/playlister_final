@@ -35,12 +35,9 @@ function ListCard(props) {
     const { idNamePair, selected } = props;
 
     useEffect(() => {
-        if (expanded) {
-            store.setCurrentList(idNamePair._id);
-        } else {
-            store.closeCurrentList();
-        }
-    }, [expanded])
+        if (store.currentList && store.currentList._id == idNamePair._id) setExpanded(true);
+        else setExpanded(false);
+    }, [store.currentList])
 
     function handleLoadList(event, id) {
         console.log("handleLoadList for " + id);
@@ -52,7 +49,8 @@ function ListCard(props) {
             console.log("load " + event.target.id);
 
             // CHANGE THE CURRENT LIST
-            store.setCurrentList(id);
+            if (expanded) store.closeCurrentList();
+            else store.setCurrentList(id);
         }
     }
 
@@ -93,10 +91,6 @@ function ListCard(props) {
     function handleUpdateText(event) {
         setText(event.target.value);
     }
-
-    function handleExpandClick (event) {
-        setExpanded(!expanded);
-    };
 
     let selectClass = "unselected-list-card";
     if (selected) {
@@ -169,14 +163,14 @@ function ListCard(props) {
                     </div>
                     <Box sx={{}}>
                         <IconButton aria-label='expand' onClick={(event) => {
-                                    handleExpandClick(event);
+                                    handleLoadList(event, idNamePair._id);
                                 }}>
                             {arrowIcon}
                         </IconButton>
                     </Box>
                 </Box>
-                <Collapse in={expanded} timeout="auto" unmountOnExit>
-                    <Box sx={{ p: 1, gridColumn: '1/3', width: '180%', textAlign: 'center' }}>
+                <Collapse sx={{gridColumn: '1/3'}} in={expanded} timeout="auto" unmountOnExit>
+                    <Box sx={{  gridColumn: '1/3', width: '100%', textAlign: 'center' }}>
                         <Songs />
                         <Box sx={{ p: 1, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                             <Box>

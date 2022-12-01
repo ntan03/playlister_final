@@ -105,8 +105,8 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.CREATE_NEW_LIST: {                
                 return setStore({
                     currentModal : CurrentModal.NONE,
-                    idNamePairs: payload,
-                    currentList: store.currentList,
+                    idNamePairs: payload.idNamePairs,
+                    currentList: payload.currentList,
                     currentSongIndex: -1,
                     currentSong: null,
                     newListCounter: store.newListCounter + 1,
@@ -297,7 +297,10 @@ function GlobalStoreContextProvider(props) {
             console.log('After push: ', temp);
             storeReducer({
                 type: GlobalStoreActionType.CREATE_NEW_LIST,
-                payload: temp
+                payload: {
+                    idNamePairs: temp,
+                    currentList: newList
+                }
             });
 
             // IF IT'S A VALID LIST THEN LET'S START EDITING IT
