@@ -32,6 +32,7 @@ createPlaylist = (req, res) => {
     User.findOne({ _id: req.userId }, (err, user) => {
         console.log("user found: " + JSON.stringify(user));
         user.playlists.push(playlist._id);
+        playlist.ownerUsername = user.userName;
         user
             .save()
             .then(() => {
@@ -150,7 +151,10 @@ getPlaylistPairs = async (req, res) => {
                         let list = playlists[key];
                         let pair = {
                             _id: list._id,
-                            name: list.name
+                            name: list.name,
+                            published: list.published,
+                            publishDate: list.publishDate,
+                            listOwner: list.ownerUsername
                         };
                         pairs.push(pair);
                     }
@@ -167,16 +171,24 @@ getPlaylists = async (req, res) => {
             errorMessage: 'UNAUTHORIZED'
         })
     }
-    await Playlist.find({}, (err, playlists) => {
+    await Playlist.find({ published: true }, (err, playlists) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
-        if (!playlists.length) {
-            return res
-                .status(404)
-                .json({ success: false, error: `Playlists not found` })
+
+        let pairs = [];
+        for (let key in playlists) {
+            let list = playlists[key];
+            let pair = {
+                _id: list._id,
+                name: list.name,
+                published: list.published,
+                publishDate: list.publishDate,
+                listOwner: list.ownerUsername
+            };
+            pairs.push(pair);
         }
-        return res.status(200).json({ success: true, data: playlists })
+        return res.status(200).json({ success: true, idNamePairs: pairs })
     }).catch(err => console.log(err))
 }
 updatePlaylist = async (req, res) => {
@@ -205,6 +217,13 @@ updatePlaylist = async (req, res) => {
             })
         }
 
+        if (playlist.published) {
+            return res.status(401).json({
+                success: false,
+                error: 'The list has already been published.'
+            })
+        }
+
         // DOES THIS LIST BELONG TO THIS USER?
         async function asyncFindUser(list) {
             await User.findOne({ email: list.ownerEmail }, (err, user) => {
@@ -216,6 +235,12 @@ updatePlaylist = async (req, res) => {
 
                     list.name = body.playlist.name;
                     list.songs = body.playlist.songs;
+                    // Ensures that list is only published at one date
+                    if (!list.published && body.playlist.published) {
+                        list.publishDate = new Date().toLocaleDateString('en-us', { year:"numeric", month:"short", day:"numeric"});
+                    }
+                    list.published = body.playlist.published;
+                    list.comments = body.playlist.comments;
                     list
                         .save()
                         .then(() => {

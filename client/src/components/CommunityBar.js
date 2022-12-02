@@ -19,13 +19,13 @@ function CommunityBar() {
         <AppBar position="static" sx={{ bgcolor: '#cdcdcd' }}>
             <Toolbar sx={{ display: 'grid', gridTemplateColumns: '10% 55% 25% 5% 5%'}}>
                 <Box sx={{ gridColumn: '1/2' }}>
-                    <IconButton>
+                    <IconButton onClick={() => {store.setPage(0)}}>
                         <HomeIcon></HomeIcon>
                     </IconButton>
-                    <IconButton>
+                    <IconButton onClick={() => {store.setPage(1)}}>
                         <PersonIcon></PersonIcon>
                     </IconButton>
-                    <IconButton>
+                    <IconButton onClick={() => {store.setPage(2)}}>
                         <GroupsIcon></GroupsIcon>
                     </IconButton>
                 </Box>

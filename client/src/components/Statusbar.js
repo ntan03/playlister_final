@@ -26,12 +26,12 @@ function Statusbar() {
         store.createNewList();
     }
 
-    if (auth.loggedIn && store.currentList){
-        return (
-            <div id="playlister-statusbar">
+    let status = ''
+    if (store.page === 0) {
+        if (auth.loggedIn && store.currentList){
+            status = 
                 <div id="list-selector-heading">
                     <Fab sx={{transform:"translate(-20%, 0%)"}}
-                        color="primary" 
                         aria-label="add"
                         id="add-list-button"
                         disabled={true}
@@ -41,11 +41,8 @@ function Statusbar() {
                     </Fab>
                     Your Playlists
                 </div>
-            </div>
-        );
-    } else if (auth.loggedIn && !store.currentList) {
-        return (
-            <div id="playlister-statusbar">
+        } else if (auth.loggedIn && !store.currentList) {
+            status = 
                 <div id="list-selector-heading">
                     <Fab sx={{transform:"translate(-20%, 0%)"}}
                         aria-label="add"
@@ -56,10 +53,24 @@ function Statusbar() {
                     </Fab>
                     Your Playlists
                 </div>
+        }
+    } else if (store.page === 1) {
+        status = 
+            <div id="list-selector-heading">
+                All Published Playlists
             </div>
-        );
+    } else if (store.page === 2) {
+        status = 
+            <div id="list-selector-heading">
+                User Playlists
+            </div>
     }
-    return null;
+
+    return (
+        <div id="playlister-statusbar">
+            {status}
+        </div>
+    );
 }
 
 export default Statusbar;

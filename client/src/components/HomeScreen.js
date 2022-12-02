@@ -24,8 +24,8 @@ const HomeScreen = () => {
     const [ tabIndex, setTabIndex ] = useState(0);
 
     useEffect(() => {
-        store.loadIdNamePairs();
-    }, []);
+        store.loadIdNamePairs(store.page);
+    }, [store.page]);
 
     // function handleCreateNewList() {
     //     store.createNewList();

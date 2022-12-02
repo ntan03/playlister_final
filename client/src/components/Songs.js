@@ -7,9 +7,12 @@ import MUIRemoveSongModal from './MUIRemoveSongModal'
 import List from '@mui/material/List';
 import { GlobalStoreContext } from '../store/index.js'
 
-function Songs() {
+function Songs(props) {
     const { store } = useContext(GlobalStoreContext);
+    const { published } = props;
     store.history = useHistory();
+
+    console.log('PLAYLIST STATUS: ', published);
 
     let modalJSX = "";
     if (store.isEditSongModalOpen()) {
@@ -23,12 +26,12 @@ function Songs() {
     if (store.currentList) {
         console.log(store.currentList.songs)
         let temp = [...store.currentList.songs]
-        temp.push('Add List')
+        if (!published) temp.push('Add List')
         list =
             <List sx={{overflow: 'auto', maxHeight: 300, bgcolor: '#cdcdcd' }}>
                 {
                     temp.map((song, index) => (
-                        (index < temp.length - 1) ?
+                        (song != 'Add List') ?
                         <SongCard
                             id={'playlist-song-' + (index)}
                             key={'playlist-song-' + (index)}

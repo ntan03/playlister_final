@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 // import AuthContext from '../auth'
 import { GlobalStoreContext } from '../store'
+import YouTube from 'react-youtube';
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -32,7 +33,10 @@ function Player() {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', p: 2 }}>
-            <Box sx={{ bgcolor: '#000000', width: 640, height: 480, margin: 'auto' }}></Box>
+            <Box sx={{ width: '100%', margin: 'auto' }}>
+                <YouTube id="youtube-player">
+                </YouTube>
+            </Box>
             <Typography variant='h5' sx={{ margin: 'auto' }}>Playlist Name: {playlistName}</Typography>
             <Typography variant='h5' sx={{ margin: 'auto' }}>Song #: {index}</Typography>
             <Typography variant='h5' sx={{ margin: 'auto' }}>Title: {title}</Typography>

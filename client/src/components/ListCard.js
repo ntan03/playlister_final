@@ -29,6 +29,8 @@ function ListCard(props) {
     const [text, setText] = useState("");
     const { idNamePair, selected } = props;
 
+    // console.log(idNamePair);
+
     useEffect(() => {
         if (store.currentList && store.currentList._id === idNamePair._id) setExpanded(true);
         else setExpanded(false);
@@ -98,6 +100,11 @@ function ListCard(props) {
         event.stopPropagation();
         store.redo();
     }
+    function handlePublish(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        store.publishList(idNamePair._id);
+    }
 
     let selectClass = "unselected-list-card";
     if (selected) {
@@ -111,6 +118,28 @@ function ListCard(props) {
     let arrowIcon = <KeyboardDoubleArrowDownIcon style={{fontSize:'24pt'}}/>;
     if (expanded) {
         arrowIcon = <KeyboardDoubleArrowUpIcon style={{fontSize:'24pt'}}/>
+    }
+
+    let deleteList = '';
+    if (store.page === 0) {
+        deleteList = <Button variant="text" onClick={(event) => { handleDeleteList(event, idNamePair._id); }}>
+            Delete
+        </Button>;
+    }
+
+    let publish = '';
+    if (!idNamePair.published) {
+        publish = <Button variant="text" onClick={(event) => { handlePublish(event); }}>
+            Publish
+        </Button>;
+    }
+
+    let publishDate = '';
+    if (idNamePair.published) {
+        publishDate = 
+            <div className="list-details">
+                Publish Date: {idNamePair.publishDate.toLocaleString()}
+            </div>
     }
 
     let playlistName = idNamePair.name;
@@ -132,6 +161,7 @@ function ListCard(props) {
                 autoFocus
             />
     }
+    
     return (
         <Box sx={{ p: 1, flexGrow: 1}}>
             <ListItem
@@ -146,11 +176,9 @@ function ListCard(props) {
                         {playlistName}
                     </div>
                     <div className="list-details">
-                        By: Nelson Tan
+                        By: { idNamePair.listOwner }
                     </div>
-                    <div className="list-details">
-                        Publish Date: 
-                    </div>
+                    {publishDate}
                 </Box>
                 <Box sx={{ p: 1, display: 'flex', justifyContent: 'flex-end', flexDirection: 'row', gridRow: '1/2', gridColumn: '2/3'}}>
                     <Box sx={{ p: 1 }}>
@@ -178,14 +206,16 @@ function ListCard(props) {
                 </Box>
                 <Collapse sx={{gridColumn: '1/3'}} in={expanded} timeout="auto" unmountOnExit>
                     <Box sx={{  gridColumn: '1/3', width: '100%', textAlign: 'center' }}>
-                        <Songs />
+                        <Songs published={idNamePair.published}/>
                         <Box sx={{ p: 1, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                             <Box>
                                 <Button variant="text" onClick={(event) => {handleUndo(event);}}>Undo</Button>
                                 <Button variant="text" onClick={(event) => {handleRedo(event);}}>Redo</Button>
                             </Box>
                             <Box>
-                                <Button variant="outlined">Duplicate</Button>
+                                {deleteList}
+                                {publish}
+                                <Button variant="text">Duplicate</Button>
                             </Box>
                         </Box>
                     </Box>
