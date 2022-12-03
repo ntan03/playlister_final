@@ -14,6 +14,35 @@ import SortIcon from '@mui/icons-material/Sort';
 
 function CommunityBar() {
     const { store } = useContext(GlobalStoreContext);
+    const [ text, setText ] = useState('');
+
+    useEffect(() => {
+        setText('');
+    }, [store.page])
+
+    function handleKeyPress(event) {
+        if (event.code === "Enter") {
+            console.log('Searching for: ', text)
+            switch (store.page) {
+                case 0:
+                    store.searchLoggedInUser(text);
+                    break;
+                case 1:
+                    store.searchAllPublishedLists(text);
+                    break;
+                case 2:
+                    store.searchUserLists(text);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    function handleUpdateText(event) {
+        setText(event.target.value);
+        // console.log(text);
+    }
 
     return (
         <AppBar position="static" sx={{ bgcolor: '#cdcdcd' }}>
@@ -30,7 +59,13 @@ function CommunityBar() {
                     </IconButton>
                 </Box>
                 <Box sx={{ gridColumn: '2/3' }}>
-                    <TextField fullWidth label="Search..." variant="outlined" sx={{gridArea: 'search'}}/>
+                    <TextField 
+                        fullWidth 
+                        label="Search..." 
+                        value={text}
+                        onChange={handleUpdateText}
+                        onKeyPress={handleKeyPress}
+                        variant="outlined"/>
                 </Box>
                 <Box sx={{ gridColumn: '4/5' }}>
                     <h2 className="sort-tag">Sort by</h2>

@@ -28,20 +28,7 @@ function Statusbar() {
 
     let status = ''
     if (store.page === 0) {
-        if (auth.loggedIn && store.currentList){
-            status = 
-                <div id="list-selector-heading">
-                    <Fab sx={{transform:"translate(-20%, 0%)"}}
-                        aria-label="add"
-                        id="add-list-button"
-                        disabled={true}
-                        onClick={handleCreateNewList}
-                    >
-                        <AddIcon />
-                    </Fab>
-                    Your Playlists
-                </div>
-        } else if (auth.loggedIn && !store.currentList) {
+        if (auth.loggedIn) {
             status = 
                 <div id="list-selector-heading">
                     <Fab sx={{transform:"translate(-20%, 0%)"}}

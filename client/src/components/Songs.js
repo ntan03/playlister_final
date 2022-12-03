@@ -37,6 +37,7 @@ function Songs(props) {
                             key={'playlist-song-' + (index)}
                             index={index}
                             song={song}
+                            published={published}
                         /> 
                         :
                         <AddSongCard 

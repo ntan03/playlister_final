@@ -34,6 +34,25 @@ export const deletePlaylistById = (id) => api.delete(`/playlist/${id}`)
 export const getPlaylistById = (id) => api.get(`/playlist/${id}`)
 export const getPlaylistPairs = () => api.get(`/playlistpairs/`)
 export const getPublishedPlaylists = () => api.get(`/publishedpairs/`)
+// export const searchCurrentUser = (name, user) => api.get(`/searchuser?name=${name}&user=${user}`)
+// export const searchPublishedLists = (name) => api.get(`/searchpublished?name=${name}`)
+// export const searchUserPublished = (user) => api.get(`/searchuserpublished?user=${user}`)
+export const searchCurrentUser = (name, user) => {
+    return api.get(`/searchuser`, {
+        params: { name, user }
+    });
+}
+export const searchPublishedLists = (name) => {
+    console.log('Searching published lists for: ', name);
+    return api.get(`/searchpublished`, {
+        params: { name }
+    });
+}
+export const searchUserPublished = (user) => {
+    return api.get(`/searchuserpublished`, {
+        params: { user }
+    });
+}
 export const updatePlaylistById = (id, playlist) => {
     return api.put(`/playlist/${id}`, {
         // SPECIFY THE PAYLOAD
@@ -47,6 +66,9 @@ const apis = {
     getPlaylistById,
     getPlaylistPairs,
     getPublishedPlaylists,
+    searchCurrentUser,
+    searchPublishedLists,
+    searchUserPublished,
     updatePlaylistById
 }
 

@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { GlobalStoreContext } from '../store'
 import ListCard from './ListCard.js'
 import MUIDeleteModal from './MUIDeleteModal'
+import MUIListErrorModal from './MUIListErrorModal'
 
 import List from '@mui/material/List';
 import Box from '@mui/material/Box'
@@ -60,6 +61,7 @@ const HomeScreen = () => {
     }
     return (
         <Box sx={{ display: 'grid', gridTemplateRows: '9% 7.5% 73.5% 10%', gridTemplateColumns: '55% 45%', height: '110%' }}>
+            <MUIListErrorModal />
             <Box sx={{ gridRow: '1/2', gridColumn: '1/3' }}>
                 <AppBanner />
             </Box>
@@ -67,7 +69,7 @@ const HomeScreen = () => {
                 <CommunityBar />
             </Box>
 
-            <Box sx={{ bgcolor:"background.paper", gridRow: '3/4', gridColumn: '1/2', display: 'flex', flexDirection: 'column', overflow: 'scroll' }}>
+            <Box sx={{ bgcolor:"background.paper", gridRow: '3/4', gridColumn: '1/2', display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
                 {
                     listCard
                 }

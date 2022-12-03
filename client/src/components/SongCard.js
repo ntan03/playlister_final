@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 function SongCard(props) {
     const { store } = useContext(GlobalStoreContext);
     const [ draggedTo, setDraggedTo ] = useState(0);
-    const { song, index } = props;
+    const { song, index, published } = props;
 
     function handleDragStart(event) {
         event.dataTransfer.setData("song", index);
@@ -48,7 +48,7 @@ function SongCard(props) {
     }
 
     let cardClass = "list-card unselected-list-card";
-    return (
+    let songCard = (
         <div
             key={index}
             id={'song-' + index + '-card'}
@@ -70,6 +70,26 @@ function SongCard(props) {
                 onClick={handleRemoveSong}>{"\u2715"}</Button>
         </div>
     );
+
+    if (published) {
+        songCard = 
+            <div
+                key={index}
+                id={'song-' + index + '-card'}
+                className={cardClass}
+                onClick={handleClick}
+            >
+                {index + 1}.{song.title} by {song.artist}
+                <Button
+                    sx={{transform:"translate(-5%, -5%)", width:"5px", height:"30px", color: 'black', borderColor: 'black', bgcolor: 'white'}}
+                    variant="contained"
+                    id={"remove-song-" + index}
+                    className="list-card-button"
+                    onClick={handleRemoveSong}>{"\u2715"}</Button>
+            </div>
+    }
+
+    return (songCard);
 }
 
 export default SongCard;

@@ -1,5 +1,6 @@
 import { useContext, useState, useEffect } from 'react'
 import { GlobalStoreContext } from '../store'
+import AuthContext from '../auth'
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 
@@ -24,9 +25,12 @@ import Songs from './Songs';
 */
 function ListCard(props) {
     const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext);
     const [editActive, setEditActive] = useState(false);
+    const [ text, setText ] = useState("");
     const [ expanded, setExpanded ] = useState(false);
-    const [text, setText] = useState("");
+    const [ like, setLike ] = useState(false);
+    const [ dislike, setDislike ] = useState(false);
     const { idNamePair, selected } = props;
 
     // console.log(idNamePair);
@@ -34,6 +38,12 @@ function ListCard(props) {
     useEffect(() => {
         if (store.currentList && store.currentList._id === idNamePair._id) setExpanded(true);
         else setExpanded(false);
+
+        if (idNamePair.likes.includes(auth.user.userName)) setLike(true);
+        else setLike(false);
+
+        if (idNamePair.dislikes.includes(auth.user.userName)) setDislike(true);
+        else setDislike(false);
     }, [store.currentList])
 
     function handleLoadList(event, id) {
@@ -65,11 +75,13 @@ function ListCard(props) {
     }
 
     function toggleEdit() {
-        let newActive = !editActive;
-        if (newActive) {
-            store.setIsListNameEditActive();
+        if (!idNamePair.published) {
+            let newActive = !editActive;
+            if (newActive) {
+                store.setIsListNameEditActive(idNamePair._id);
+            }
+            setEditActive(newActive);
         }
-        setEditActive(newActive);
     }
 
     async function handleDeleteList(event, id) {
@@ -83,27 +95,54 @@ function ListCard(props) {
         if (event.code === "Enter") {
             let id = event.target.id.substring("list-".length);
             console.log('text: ', text);
-            store.changeListName(id, text);
+            if (text.length !== 0) store.changeListName(id, text);
             toggleEdit();
         }
     }
+
     function handleUpdateText(event) {
         setText(event.target.value);
     }
+
     function handleUndo(event) {
         event.preventDefault();
         event.stopPropagation();
         store.undo();
     }
+
     function handleRedo(event) {
         event.preventDefault();
         event.stopPropagation();
         store.redo();
     }
+
     function handlePublish(event) {
         event.preventDefault();
         event.stopPropagation();
         store.publishList(idNamePair._id);
+    }
+
+    function handleDuplicate(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        console.log(`Duplicate list ${idNamePair._id}`);
+        store.duplicateList(idNamePair._id);
+    }
+    
+    function handleLike(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        if (dislike) setDislike(!dislike);
+        setLike(!like);
+        store.updateLikes(idNamePair._id, 1);
+    }
+
+    function handleDislike(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        if (like) setLike(!like);
+        setDislike(!dislike);
+        store.updateLikes(idNamePair._id, -1);
     }
 
     let selectClass = "unselected-list-card";
@@ -115,9 +154,25 @@ function ListCard(props) {
         cardStatus = true;
     }
 
+    let likeButton = <ThumbUpIcon style={{fontSize:'24pt'}} />;
+    if (like) likeButton = <ThumbUpIcon style={{fontSize:'24pt', color: '#35bcfc'}} />
+
+    let dislikeButton = <ThumbDownIcon style={{fontSize:'24pt'}} />
+    if (dislike) dislikeButton = <ThumbDownIcon style={{fontSize:'24pt', color: '#35bcfc'}} />
+
     let arrowIcon = <KeyboardDoubleArrowDownIcon style={{fontSize:'24pt'}}/>;
     if (expanded) {
         arrowIcon = <KeyboardDoubleArrowUpIcon style={{fontSize:'24pt'}}/>
+    }
+
+    let undoButton = '' 
+    if (!idNamePair.published) {
+        undoButton = <Button variant="text" onClick={(event) => {handleUndo(event);}}>Undo</Button>;
+    }
+
+    let redoButton = ''
+    if (!idNamePair.published) {
+        redoButton = <Button variant="text" onClick={(event) => {handleRedo(event);}}>Redo</Button>;
     }
 
     let deleteList = '';
@@ -138,7 +193,7 @@ function ListCard(props) {
     if (idNamePair.published) {
         publishDate = 
             <div className="list-details">
-                Publish Date: {idNamePair.publishDate.toLocaleString()}
+                Publish Date: {(new Date(idNamePair.publishDate)).toLocaleDateString('en-us', { year:"numeric", month:"short", day:"numeric"})}
             </div>
     }
 
@@ -182,14 +237,16 @@ function ListCard(props) {
                 </Box>
                 <Box sx={{ p: 1, display: 'flex', justifyContent: 'flex-end', flexDirection: 'row', gridRow: '1/2', gridColumn: '2/3'}}>
                     <Box sx={{ p: 1 }}>
-                        <IconButton aria-label='like'>
-                            <ThumbUpIcon style={{fontSize:'24pt'}} />
+                        <IconButton aria-label='like' onClick={(event) => {handleLike(event)}}>
+                            { likeButton }
                         </IconButton>
+                        {idNamePair.likes.length}
                     </Box>
                     <Box sx={{ p: 1 }}>
-                        <IconButton aria-label='dislike'>
-                            <ThumbDownIcon style={{fontSize:'24pt'}} />
+                        <IconButton aria-label='dislike' onClick={(event) => {handleDislike(event)}}>
+                            { dislikeButton }
                         </IconButton>
+                        {idNamePair.dislikes.length}
                     </Box>
                 </Box>
                 <Box sx={{ p: 1, display: 'flex', justifyContent: 'flex-end', flexDirection: 'row', gridRow: '2/3', gridColumn: '2/3' }}>
@@ -209,13 +266,13 @@ function ListCard(props) {
                         <Songs published={idNamePair.published}/>
                         <Box sx={{ p: 1, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                             <Box>
-                                <Button variant="text" onClick={(event) => {handleUndo(event);}}>Undo</Button>
-                                <Button variant="text" onClick={(event) => {handleRedo(event);}}>Redo</Button>
+                                {undoButton}
+                                {redoButton}
                             </Box>
                             <Box>
                                 {deleteList}
                                 {publish}
-                                <Button variant="text">Duplicate</Button>
+                                <Button variant="text" onClick={(event) => {handleDuplicate(event)} }>Duplicate</Button>
                             </Box>
                         </Box>
                     </Box>
