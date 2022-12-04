@@ -436,9 +436,13 @@ function GlobalStoreContextProvider(props) {
                         async function getListPairs(playlist) {
                             response = await api.getPlaylistPairs();
                             if (response.data.success) {
+                                let originalPairs = store.idNamePairs;
+                                let ids = originalPairs.map((pair) => pair._id);
+
                                 let pairsArray = response.data.idNamePairs;
                                 console.log('Updated likes/dislike:');
-                                console.log(pairsArray)
+                                pairsArray = pairsArray.filter((pair) => ids.includes(pair._id))
+                                console.log('Pairs received: ', pairsArray)
                                 storeReducer({
                                     type: GlobalStoreActionType.LIKE_DISLIKE_LIST,
                                     payload: {
@@ -810,6 +814,14 @@ function GlobalStoreContextProvider(props) {
         storeReducer({
             type: GlobalStoreActionType.CHANGE_PAGE,
             payload: page
+        })
+    }
+
+    store.noSearch = function () {
+        console.log('User did not provide a search query, emptying id name pairs...');
+        storeReducer({
+            type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
+            payload: []
         })
     }
 

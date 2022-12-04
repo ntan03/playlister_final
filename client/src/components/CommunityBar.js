@@ -23,18 +23,22 @@ function CommunityBar() {
     function handleKeyPress(event) {
         if (event.code === "Enter") {
             console.log('Searching for: ', text)
-            switch (store.page) {
-                case 0:
-                    store.searchLoggedInUser(text);
-                    break;
-                case 1:
-                    store.searchAllPublishedLists(text);
-                    break;
-                case 2:
-                    store.searchUserLists(text);
-                    break;
-                default:
-                    break;
+            if (text.length > 0) {
+                switch (store.page) {
+                    case 0:
+                        store.searchLoggedInUser(text);
+                        break;
+                    case 1:
+                        store.searchAllPublishedLists(text);
+                        break;
+                    case 2:
+                        store.searchUserLists(text);
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                store.noSearch();
             }
         }
     }
@@ -44,17 +48,35 @@ function CommunityBar() {
         // console.log(text);
     }
 
+    function handleHomePress() {
+        store.setPage(0)
+        store.loadIdNamePairs(0)
+        setText('')
+    }
+
+    function handleAllPress() {
+        store.setPage(1)
+        store.loadIdNamePairs(1)
+        setText('')
+    }
+
+    function handleUserPress() {
+        store.setPage(2)
+        store.loadIdNamePairs(2)
+        setText('')
+    }
+
     return (
         <AppBar position="static" sx={{ bgcolor: '#cdcdcd' }}>
             <Toolbar sx={{ display: 'grid', gridTemplateColumns: '10% 55% 25% 5% 5%'}}>
                 <Box sx={{ gridColumn: '1/2' }}>
-                    <IconButton onClick={() => {store.setPage(0)}}>
+                    <IconButton onClick={handleHomePress}>
                         <HomeIcon></HomeIcon>
                     </IconButton>
-                    <IconButton onClick={() => {store.setPage(1)}}>
+                    <IconButton onClick={handleAllPress}>
                         <PersonIcon></PersonIcon>
                     </IconButton>
-                    <IconButton onClick={() => {store.setPage(2)}}>
+                    <IconButton onClick={handleUserPress}>
                         <GroupsIcon></GroupsIcon>
                     </IconButton>
                 </Box>
