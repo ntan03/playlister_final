@@ -280,6 +280,30 @@ function GlobalStoreContextProvider(props) {
     // DRIVE THE STATE OF THE APPLICATION. WE'LL CALL THESE IN 
     // RESPONSE TO EVENTS INSIDE OUR COMPONENTS.
 
+    store.uniqueNameGenerate = function (name, pairsArray) {
+        let names = pairsArray.map((pair) => pair.name);
+        names.push(name);
+
+        let hash = new Map();
+        for (let i = 0; i < names.length; i++) {
+            if (!hash.has(names[i])) hash.set(names[i], 1)
+            else {
+                let count = hash.get(names[i]);
+                hash.set(names[i], hash.get(names[i]) + 1);
+                let newName = names[i] + count.toString();
+                while (hash.has(newName)) {
+                    count = hash.get(names[i]);
+                    hash.set(names[i], hash.get(names[i]) + 1);
+                    newName = names[i] + count.toString();
+                }
+                names[i] += count.toString();
+                if (!hash.has(names[i])) hash.set(names[i], 1)
+            }
+        }
+
+        return names[names.length - 1];
+    }
+
     // THIS FUNCTION PROCESSES CHANGING A LIST NAME
     store.changeListName = function (id, newName) {
         // GET THE LIST
@@ -364,36 +388,45 @@ function GlobalStoreContextProvider(props) {
             let response = await api.getPlaylistById(id);
             if (response.data.success) {
                 let playlist = response.data.playlist;
-                async function createDuplicateList(playlist) {
-                    response = await api.createPlaylist(playlist.name, playlist.songs, auth.user.email);
-                    console.log("duplicateList response: " + response);
-                    if (response.status === 201) {
-                        tps.clearAllTransactions();
-                        let newList = response.data.playlist;
-                        async function getListPairs(playlist) {
-                            response = await api.getPlaylistPairs();
-                            if (response.data.success) {
-                                let originalPairs = store.idNamePairs;
-                                let ids = originalPairs.map((pair) => pair._id);
-
-                                let pairsArray = response.data.idNamePairs;
-                                pairsArray = pairsArray.filter((pair) => ids.includes(pair._id) || pair._id == newList._id);
-
-                                storeReducer({
-                                    type: GlobalStoreActionType.CREATE_NEW_LIST,
-                                    payload: {
-                                        idNamePairs: (store.page === 0) ? pairsArray : store.idNamePairs,
-                                        currentList: store.currentList
+                async function getListPairs(playlist) {
+                    response = await api.getPlaylistPairs();
+                    if (response.data.success) {
+                        let pairsArray = response.data.idNamePairs;
+                        let uniqueName = store.uniqueNameGenerate(playlist.name, pairsArray);
+                        console.log('Unique name generated: ', uniqueName);
+                        async function createDuplicateList(playlist, uniqueName) {
+                            response = await api.createPlaylist(uniqueName, playlist.songs, auth.user.email);
+                            console.log("duplicateList response: " + response);
+                            if (response.status === 201) {
+                                tps.clearAllTransactions();
+                                let newList = response.data.playlist;
+                                async function getListPairs(playlist) {
+                                    response = await api.getPlaylistPairs();
+                                    if (response.data.success) {
+                                        let originalPairs = store.idNamePairs;
+                                        let ids = originalPairs.map((pair) => pair._id);
+        
+                                        let pairsArray = response.data.idNamePairs;
+                                        pairsArray = pairsArray.filter((pair) => ids.includes(pair._id) || pair._id == playlist._id);
+        
+                                        storeReducer({
+                                            type: GlobalStoreActionType.CREATE_NEW_LIST,
+                                            payload: {
+                                                idNamePairs: (store.page === 0) ? pairsArray : store.idNamePairs,
+                                                currentList: store.currentList
+                                            }
+                                        });
                                     }
-                                });
+                                }
+                                getListPairs(newList);
+                            } else {
+                                console.log("API FAILED TO CREATE A NEW LIST");
                             }
                         }
-                        getListPairs(newList);
-                    } else {
-                        console.log("API FAILED TO CREATE A NEW LIST");
+                        createDuplicateList(playlist, uniqueName);
                     }
                 }
-                createDuplicateList(playlist);
+                getListPairs(playlist);
             }
         }
         asyncDuplicateList(id);
@@ -535,30 +568,39 @@ function GlobalStoreContextProvider(props) {
 
     // THIS FUNCTION CREATES A NEW LIST
     store.createNewList = async function () {
-        let newListName = "Untitled";
-        let response = await api.createPlaylist(newListName, [], auth.user.email);
-        console.log("createNewList response: " + response);
-        if (response.status === 201) {
-            tps.clearAllTransactions();
-            let newList = response.data.playlist;
-            async function getListPairs(playlist) {
-                response = await api.getPlaylistPairs();
-                if (response.data.success) {
-                    let pairsArray = response.data.idNamePairs;
-                    storeReducer({
-                        type: GlobalStoreActionType.CREATE_NEW_LIST,
-                        payload: {
-                            idNamePairs: pairsArray,
-                            currentList: newList
+        async function asyncCreateNewList() {
+            let response = await api.getPlaylistPairs();
+            if (response.data.success) {
+                let pairsArray = response.data.idNamePairs;
+                let uniqueName = store.uniqueNameGenerate("Untitled", pairsArray);
+
+                console.log('Unique name generated: ', uniqueName);
+                response = await api.createPlaylist(uniqueName, [], auth.user.email);
+                console.log("createNewList response: " + response);
+                if (response.status === 201) {
+                    tps.clearAllTransactions();
+                    let newList = response.data.playlist;
+                    async function getListPairs(playlist) {
+                        response = await api.getPlaylistPairs();
+                        if (response.data.success) {
+                            let pairsArray = response.data.idNamePairs;
+                            storeReducer({
+                                type: GlobalStoreActionType.CREATE_NEW_LIST,
+                                payload: {
+                                    idNamePairs: pairsArray,
+                                    currentList: newList
+                                }
+                            });
+                            // store.setCurrentList(id);
                         }
-                    });
-                    // store.setCurrentList(id);
+                    }
+                    getListPairs(newList);
+                } else {
+                    console.log("API FAILED TO CREATE A NEW LIST");
                 }
             }
-            getListPairs(newList);
-        } else {
-            console.log("API FAILED TO CREATE A NEW LIST");
-        }
+        } 
+        asyncCreateNewList();
     }
 
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS

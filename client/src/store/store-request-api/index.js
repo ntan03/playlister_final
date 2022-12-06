@@ -23,6 +23,7 @@ const api = axios.create({
 // WE NEED TO PUT THINGS INTO THE DATABASE OR IF WE HAVE SOME
 // CUSTOM FILTERS FOR QUERIES
 export const createPlaylist = (newListName, newSongs, userEmail) => {
+    console.log('New list name: ', newListName);
     return api.post(`/playlist/`, {
         // SPECIFY THE PAYLOAD
         name: newListName,

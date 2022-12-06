@@ -22,44 +22,17 @@ createPlaylist = async (req, res) => {
             error: 'You must provide a Playlist',
         })
     }
-
-    await Playlist.find({ ownerEmail: body.ownerEmail }, (err, playlists) => {
-        if (err) {
-            return res.status(400).json({ success: false, error: err })
-        }
-        names = playlists.map((list) => list.name);
-        names.push(body.name);
-
-        let hash = new Map();
-        for (let i = 0; i < names.length; i++) {
-            if (!hash.has(names[i])) hash.set(names[i], 1)
-            else {
-                let count = hash.get(names[i]);
-                hash.set(names[i], hash.get(names[i]) + 1);
-                let newName = names[i] + count.toString();
-                while (hash.has(newName)) {
-                    count = hash.get(names[i]);
-                    hash.set(names[i], hash.get(names[i]) + 1);
-                    newName = names[i] + count.toString();
-                }
-                names[i] += count.toString();
-                if (!hash.has(names[i])) hash.set(names[i], 1)
-            }
-        }
-
-        console.log('New names: ', names);
-        body.name = names[names.length - 1];
-    }).catch(err => console.log(err))
     console.log('NEW PLAYLIST BODY: ', body);
     
     const playlist = new Playlist(body);
     console.log("playlist: " + playlist.toString());
     if (!playlist) {
+        console.log('Playlist info missing...');
         return res.status(400).json({ success: false, error: err })
     }
 
     User.findOne({ _id: req.userId }, (err, user) => {
-        console.log("user found: " + JSON.stringify(user));
+        // console.log("user found: " + JSON.stringify(user));
         user.playlists.push(playlist._id);
         playlist.ownerUsername = user.userName;
         user
@@ -73,6 +46,7 @@ createPlaylist = async (req, res) => {
                         })
                     })
                     .catch(error => {
+                        console.log('Error creating playlist')
                         return res.status(400).json({
                             errorMessage: 'Playlist Not Created!'
                         })
