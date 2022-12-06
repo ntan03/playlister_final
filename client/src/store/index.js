@@ -336,7 +336,11 @@ function GlobalStoreContextProvider(props) {
                         async function getListPairs(playlist) {
                             response = await api.getPlaylistPairs();
                             if (response.data.success) {
+                                let originalPairs = store.idNamePairs;
+                                let ids = originalPairs.map((pair) => pair._id);
+
                                 let pairsArray = response.data.idNamePairs;
+                                pairsArray = pairsArray.filter((pair) => ids.includes(pair._id));
                                 storeReducer({
                                     type: GlobalStoreActionType.PUBLISH_LIST,
                                     payload: {
@@ -369,7 +373,12 @@ function GlobalStoreContextProvider(props) {
                         async function getListPairs(playlist) {
                             response = await api.getPlaylistPairs();
                             if (response.data.success) {
+                                let originalPairs = store.idNamePairs;
+                                let ids = originalPairs.map((pair) => pair._id);
+
                                 let pairsArray = response.data.idNamePairs;
+                                pairsArray = pairsArray.filter((pair) => ids.includes(pair._id) || pair._id == newList._id);
+
                                 storeReducer({
                                     type: GlobalStoreActionType.CREATE_NEW_LIST,
                                     payload: {
