@@ -14,30 +14,33 @@ import FastForwardIcon from '@mui/icons-material/FastForward';
 function Player() {
     // const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
-    const [ playlistName, setPlaylistName ] = useState('');
     const [ youTubePlayer, setYouTubePlayer ] = useState(null);
+    const [ playlist, setPlaylist ] = useState(null);
     const [ index, setIndex ] = useState(0);
-    const [ title, setTitle ] = useState('');
-    const [ artist, setArtist ] = useState('');
 
     useEffect(() => {
+        // Handles loading new list for playing
         if (store.playingList) {
-            setPlaylistName(store.playingList.name);
+            if (playlist) console.log('Current playlist: ', playlist);
+            console.log('New playlist: ', store.playingList);
+            setPlaylist(store.playingList);
+            setIndex(0);
         } else {
-            setPlaylistName('');
+            setPlaylist(null);
+            setIndex(0);
         }
     }, [store.playingList])
 
-    let playlist = [];
-    if (store.playingList) {
-        playlist = store.playingList.songs.map((song) => song.youTubeId);
+    let songs = [];
+    if (playlist) {
+        songs = playlist.songs.map((song) => song);
     }
 
     // THIS FUNCTION LOADS THE CURRENT SONG INTO
     // THE PLAYER AND PLAYS IT
     function loadAndPlayCurrentSong(player) {
-        if (playlist[index]) {
-            let song = playlist[index];
+        if (songs[index]) {
+            let song = songs[index].youTubeId;
             setYouTubePlayer(player);
             player.loadVideoById(song);
             player.playVideo();
@@ -47,14 +50,14 @@ function Player() {
     // THIS FUNCTION INCREMENTS THE PLAYLIST SONG TO THE NEXT ONE
     function incSong() {
         console.log('Next song...')
-        if (index === playlist.length - 1) setIndex(0);
+        if (index === songs.length - 1) setIndex(0);
         else setIndex(index + 1);
     }
 
     function decSong() {
         console.log('Previous song...')
         if (index === 0) {
-            setIndex(playlist.length - 1)
+            setIndex(songs.length - 1)
         } else setIndex(index - 1)
     }
 
@@ -74,7 +77,7 @@ function Player() {
 
     function onPlayerReady(event) {
         loadAndPlayCurrentSong(event.target);
-        if (playlist[index]) event.target.playVideo();
+        if (songs[index]) event.target.playVideo();
     }
 
     // THIS IS OUR EVENT HANDLER FOR WHEN THE YOUTUBE PLAYER'S STATE
@@ -108,34 +111,59 @@ function Player() {
     }
 
     console.log('Current playlist: ', playlist)
+    let playlistName = '';
+    if (playlist) {
+        playlistName = <Typography variant='h5' sx={{ margin: 'auto' }}>Playlist Name: {playlist.name}</Typography>
+    }
+
+    let song_num = '';
+    if (playlist && songs[index]) {
+        song_num = <Typography variant='h5' sx={{ margin: 'auto' }}>Song #: {index}</Typography>
+    }
+
+    let songTitle = '';
+    if (playlist && songs[index]) {
+        songTitle = <Typography variant='h5' sx={{ margin: 'auto' }}>Title: {songs[index].title}</Typography>
+    }
+
+    let songArtist = '';
+    if (playlist && songs[index]) {
+        songArtist = <Typography variant='h5' sx={{ margin: 'auto' }}>Artist: {songs[index].artist}</Typography>
+    }
+
+    let toolbar = '';
+    if (playlist && songs[index]) {
+        toolbar = 
+            <Box sx={{ bgcolor: '#cdcdcd', display: 'flex', flexDirection: 'row', justifyContent: 'center', borderRadius:"25px", p: 1 }}>
+                <IconButton onClick={decSong}>
+                    <FastRewindIcon></FastRewindIcon>
+                </IconButton>
+                <IconButton onClick={pauseVid}>
+                    <PauseIcon></PauseIcon>
+                </IconButton>
+                <IconButton onClick={playVid}>
+                    <PlayArrowIcon></PlayArrowIcon>
+                </IconButton>
+                <IconButton onClick={incSong}>
+                    <FastForwardIcon></FastForwardIcon>
+                </IconButton>
+            </Box>
+    }
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', p: 2 }}>
             <Box sx={{ width: '100%', margin: 'auto' }}>
                 <YouTube 
                     id="youtube-player"
-                    videoId={playlist[index]}
+                    videoId={(songs[index]) ? songs[index].youTubeId : ''}
                     onReady={onPlayerReady}
                     onStateChange={onPlayerStateChange}/>
             </Box>
-            <Typography variant='h5' sx={{ margin: 'auto' }}>Playlist Name: {playlistName}</Typography>
-            <Typography variant='h5' sx={{ margin: 'auto' }}>Song #: {index}</Typography>
-            <Typography variant='h5' sx={{ margin: 'auto' }}>Title: {title}</Typography>
-            <Typography variant='h5' sx={{ margin: 'auto' }}>Artist: {artist}</Typography>
-            <Box sx={{ bgcolor: '#cdcdcd', display: 'flex', flexDirection: 'row', justifyContent: 'center', borderRadius:"25px", p: 1 }}>
-                    <IconButton onClick={decSong}>
-                        <FastRewindIcon></FastRewindIcon>
-                    </IconButton>
-                    <IconButton onClick={pauseVid}>
-                        <PauseIcon></PauseIcon>
-                    </IconButton>
-                    <IconButton onClick={playVid}>
-                        <PlayArrowIcon></PlayArrowIcon>
-                    </IconButton>
-                    <IconButton onClick={incSong}>
-                        <FastForwardIcon></FastForwardIcon>
-                    </IconButton>
-            </Box>
+            {playlistName}
+            {song_num}
+            {songTitle}
+            {songArtist}
+            {toolbar}
         </Box>
     )
 }

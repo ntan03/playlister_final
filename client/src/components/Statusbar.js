@@ -18,9 +18,9 @@ function Statusbar() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
 
-    function clickHandler() {
-        store.tryAcessingOtherAccountPlaylist();
-    }
+    // function clickHandler() {
+    //     store.tryAcessingOtherAccountPlaylist();
+    // }
 
     function handleCreateNewList() {
         store.createNewList();

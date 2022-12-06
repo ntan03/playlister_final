@@ -22,7 +22,7 @@ function CommunityBar() {
 
     function handleKeyPress(event) {
         if (event.code === "Enter") {
-            console.log('Searching for: ', text)
+            console.log(`Searching for '${text}' on page ${store.page}`)
             if (text.length > 0) {
                 switch (store.page) {
                     case 0:
@@ -32,6 +32,7 @@ function CommunityBar() {
                         store.searchAllPublishedLists(text);
                         break;
                     case 2:
+                        console.log('Search user lists')
                         store.searchUserLists(text);
                         break;
                     default:
@@ -49,19 +50,19 @@ function CommunityBar() {
     }
 
     function handleHomePress() {
-        store.setPage(0)
+        // store.setPage(0)
         store.loadIdNamePairs(0)
         setText('')
     }
 
     function handleAllPress() {
-        store.setPage(1)
+        // store.setPage(1)
         store.loadIdNamePairs(1)
         setText('')
     }
 
     function handleUserPress() {
-        store.setPage(2)
+        // store.setPage(2)
         store.loadIdNamePairs(2)
         setText('')
     }

@@ -54,6 +54,7 @@ createPlaylist = async (req, res) => {
             });
     })
 }
+
 deletePlaylist = async (req, res) => {
     if(auth.verifyUser(req) === null){
         return res.status(400).json({
@@ -72,7 +73,7 @@ deletePlaylist = async (req, res) => {
 
         // DOES THIS LIST BELONG TO THIS USER?
         async function asyncFindUser(list) {
-            User.findOne({ email: list.ownerEmail }, async      (err, user) => {
+            User.findOne({ email: list.ownerEmail }, async (err, user) => {
                 console.log("user._id: " + user._id);
                 console.log("req.userId: " + req.userId);
                 if (user._id == req.userId) {
@@ -96,6 +97,7 @@ deletePlaylist = async (req, res) => {
         asyncFindUser(playlist);
     })
 }
+
 getPlaylistById = async (req, res) => {
     if(auth.verifyUser(req) === null){
         return res.status(400).json({
@@ -128,6 +130,7 @@ getPlaylistById = async (req, res) => {
         asyncFindUser(list);
     }).catch(err => console.log(err))
 }
+
 getPlaylistPairs = async (req, res) => {
     if(auth.verifyUser(req) === null){
         return res.status(400).json({
@@ -175,6 +178,7 @@ getPlaylistPairs = async (req, res) => {
         asyncFindList(user.email);
     }).catch(err => console.log(err))
 }
+
 getPlaylists = async (req, res) => {
     if(auth.verifyUser(req) === null){
         return res.status(400).json({
@@ -204,6 +208,38 @@ getPlaylists = async (req, res) => {
         return res.status(200).json({ success: true, idNamePairs: pairs })
     }).catch(err => console.log(err))
 }
+
+getAllPlaylists = async (req, res) => {
+    if(auth.verifyUser(req) === null){
+        return res.status(400).json({
+            errorMessage: 'UNAUTHORIZED'
+        })
+    }
+    await Playlist.find({}, (err, playlists) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+
+        let pairs = [];
+        for (let key in playlists) {
+            let list = playlists[key];
+            let pair = {
+                _id: list._id,
+                name: list.name,
+                published: list.published,
+                publishDate: list.publishDate,
+                listOwner: list.ownerUsername,
+                likes: list.likes,
+                dislikes: list.dislikes,
+                listens: list.listens
+            };
+            pairs.push(pair);
+        }
+        console.log('RETURNING ALL PAIRS!')
+        return res.status(200).json({ success: true, idNamePairs: pairs })
+    }).catch(err => console.log(err))
+}
+
 searchCurrentUser = async (req, res) => {
     if(auth.verifyUser(req) === null){
         return res.status(400).json({
@@ -233,6 +269,7 @@ searchCurrentUser = async (req, res) => {
         return res.status(200).json({ success: true, idNamePairs: pairs })
     }).catch(err => console.log(err));
 }
+
 searchAllPublished = async (req, res) => {
     if(auth.verifyUser(req) === null){
         return res.status(400).json({
@@ -261,6 +298,7 @@ searchAllPublished = async (req, res) => {
         return res.status(200).json({ success: true, idNamePairs: pairs })
     }).catch(err => console.log(err));
 }
+
 searchUserPublished = async (req, res) => {
     if(auth.verifyUser(req) === null){
         return res.status(400).json({
@@ -270,7 +308,8 @@ searchUserPublished = async (req, res) => {
 
     let user = req.query.user;
     user = user.toLowerCase();
-    await Playlist.find({ ownerUsername: user, published: true }, (err, playlists) => {
+    console.log('Searching for playlists with user substring: ', user)
+    await Playlist.find({ ownerUsername: { "$regex": user, "$options": "i" }, published: true }, (err, playlists) => {
         let pairs = [];
         for (let key in playlists) {
             let list = playlists[key];
@@ -289,6 +328,7 @@ searchUserPublished = async (req, res) => {
         return res.status(200).json({ success: true, idNamePairs: pairs })
     }).catch(err => console.log(err));
 }
+
 updatePlaylist = async (req, res) => {
     if(auth.verifyUser(req) === null){
         return res.status(400).json({
@@ -343,9 +383,11 @@ updatePlaylist = async (req, res) => {
     if (playlist.published) {
         let likes = JSON.stringify(playlist.likes);
         let dislikes = JSON.stringify(playlist.dislikes);
+        let comments = JSON.stringify(playlist.comments);
         let newLikes = JSON.stringify(body.playlist.likes);
         let newDislikes = JSON.stringify(body.playlist.dislikes);
-        if (likes === newLikes && dislikes === newDislikes) {
+        let newComments = JSON.stringify(body.playlist.comments);
+        if (likes === newLikes && dislikes === newDislikes && comments === newComments) {
             return res.status(401).json({
                 success: false,
                 error: 'The list has already been published.'
@@ -406,6 +448,7 @@ module.exports = {
     getPlaylistById,
     getPlaylistPairs,
     getPlaylists,
+    getAllPlaylists,
     searchCurrentUser,
     searchAllPublished,
     searchUserPublished,

@@ -14,6 +14,7 @@ import AppBanner from './AppBanner';
 import CommunityBar from './CommunityBar';
 import Statusbar from './Statusbar';
 import Player from './Player';
+import Comments from './Comments'
 
 /*
     This React component lists all the top5 lists in the UI.
@@ -38,9 +39,25 @@ const HomeScreen = () => {
 
     let window = "";
     if (tabIndex === 0) {
-        window = <Player/>
+        window =
+            <div>
+                <Player/>
+            </div>
     } else if (tabIndex === 1) {
-        window = <p>Comments go here</p>
+        window = 
+            <div className='hidden-window'>
+                <Player/>
+            </div>
+    }
+
+    let comments = "";
+    if (tabIndex === 0) {
+        comments = 
+            <Box className='hidden-window'>
+                <Comments/>
+            </Box>
+    } else {
+        comments = <Comments/>
     }
     
     let listCard = "";
@@ -83,9 +100,9 @@ const HomeScreen = () => {
                         <Tab label="Comments" />
                     </Tabs>
                 </Box>
-                <Box>
-                    {window}
-                </Box>
+                
+                {window}
+                {comments}
             </Box>
 
             <Box sx={{ gridRow: '4/5', gridColumn: '1/3' }}>

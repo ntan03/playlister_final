@@ -240,20 +240,20 @@ function ListCard(props) {
                 <Box sx={{ p: 1, display: 'flex', justifyContent: 'flex-end', flexDirection: 'row', gridRow: '1/2', gridColumn: '2/3'}}>
                     <Box sx={{ p: 1 }}>
                         <IconButton aria-label='like' onClick={(event) => {handleLike(event)}}>
-                            { likeButton }
+                            { (idNamePair.published) ? likeButton : null }
                         </IconButton>
-                        {idNamePair.likes.length}
+                        {(idNamePair.published) ? idNamePair.likes.length : null}
                     </Box>
                     <Box sx={{ p: 1 }}>
                         <IconButton aria-label='dislike' onClick={(event) => {handleDislike(event)}}>
-                            { dislikeButton }
+                            { (idNamePair.published) ? dislikeButton : null}
                         </IconButton>
-                        {idNamePair.dislikes.length}
+                        { (idNamePair.published) ? idNamePair.dislikes.length : null}
                     </Box>
                 </Box>
                 <Box sx={{ p: 1, display: 'flex', justifyContent: 'flex-end', flexDirection: 'row', gridRow: '2/3', gridColumn: '2/3' }}>
                     <div className="list-details">
-                        Listens: 
+                        Listens: {idNamePair.listens}
                     </div>
                     <Box sx={{}}>
                         <IconButton aria-label='expand' onClick={(event) => {
@@ -264,7 +264,7 @@ function ListCard(props) {
                     </Box>
                 </Box>
                 <Collapse sx={{gridColumn: '1/3'}} in={expanded} timeout="auto" unmountOnExit>
-                    <Box sx={{  gridColumn: '1/3', width: '100%', textAlign: 'center' }}>
+                    <Box sx={{ gridColumn: '1/3', width: '100%', textAlign: 'center' }}>
                         <Songs published={idNamePair.published}/>
                         <Box sx={{ p: 1, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                             <Box>

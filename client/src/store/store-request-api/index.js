@@ -35,6 +35,7 @@ export const deletePlaylistById = (id) => api.delete(`/playlist/${id}`)
 export const getPlaylistById = (id) => api.get(`/playlist/${id}`)
 export const getPlaylistPairs = () => api.get(`/playlistpairs/`)
 export const getPublishedPlaylists = () => api.get(`/publishedpairs/`)
+export const getAllPairs = () => api.get(`/allpairs`)
 // export const searchCurrentUser = (name, user) => api.get(`/searchuser?name=${name}&user=${user}`)
 // export const searchPublishedLists = (name) => api.get(`/searchpublished?name=${name}`)
 // export const searchUserPublished = (user) => api.get(`/searchuserpublished?user=${user}`)
@@ -67,6 +68,7 @@ const apis = {
     getPlaylistById,
     getPlaylistPairs,
     getPublishedPlaylists,
+    getAllPairs,
     searchCurrentUser,
     searchPublishedLists,
     searchUserPublished,

@@ -31,7 +31,7 @@ function Songs(props) {
             <List sx={{overflow: 'auto', maxHeight: 300, bgcolor: '#cdcdcd' }}>
                 {
                     temp.map((song, index) => (
-                        (song != 'Add List') ?
+                        (song !== 'Add List') ?
                         <SongCard
                             id={'playlist-song-' + (index)}
                             key={'playlist-song-' + (index)}

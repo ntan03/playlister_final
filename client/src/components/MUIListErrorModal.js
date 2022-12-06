@@ -6,7 +6,7 @@ import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import AuthContext from '../auth'
+// import AuthContext from '../auth'
 
 const style = {
     position: 'absolute',
@@ -21,7 +21,7 @@ const style = {
 
 export default function MUIListErrorModal() {
     const { store } = useContext(GlobalStoreContext);
-    const { auth } = useContext(AuthContext)
+    // const { auth } = useContext(AuthContext)
 
     function handleCloseButton() {
         store.hideModals();
@@ -32,7 +32,7 @@ export default function MUIListErrorModal() {
         <Modal open={store.currentModal === "ERROR"}>
             <Box sx={style}>
                 <Alert severity="error">
-                    <AlertTitle>Duplicate Name</AlertTitle>
+                    <AlertTitle>List Update Error</AlertTitle>
                     {store.message}
                     <div id="close-button">
                         <Button variant="text" onClick={handleCloseButton}>Close</Button>
