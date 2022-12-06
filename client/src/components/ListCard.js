@@ -64,7 +64,9 @@ function ListCard(props) {
     }
 
     function handleClick(event) {
-        if (event.detail == 2) {
+        if (event.detail == 1) {
+            store.setPlayingList(idNamePair._id);
+        } else if (event.detail == 2) {
             handleToggleEdit(event);
         }
     }

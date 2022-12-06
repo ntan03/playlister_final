@@ -82,7 +82,7 @@ deletePlaylist = async (req, res) => {
                     console.log("Deleted playlist from user: ", user.playlists);
                     await user.save();
                     Playlist.findOneAndDelete({ _id: req.params.id }, () => {
-                        return res.status(200).json({});
+                        return res.status(200).json({ id: req.params.id });
                     }).catch(err => console.log(err))
                 }
                 else {
@@ -380,6 +380,7 @@ updatePlaylist = async (req, res) => {
                         return res.status(200).json({
                             success: true,
                             id: list._id,
+                            playlist: playlist,
                             message: 'Playlist updated!',
                         })
                     })

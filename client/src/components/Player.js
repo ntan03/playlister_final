@@ -21,16 +21,16 @@ function Player() {
     const [ artist, setArtist ] = useState('');
 
     useEffect(() => {
-        if (store.currentList) {
-            setPlaylistName(store.currentList.name);
+        if (store.playingList) {
+            setPlaylistName(store.playingList.name);
         } else {
             setPlaylistName('');
         }
-    }, [store.currentList])
+    }, [store.playingList])
 
     let playlist = [];
-    if (store.currentList) {
-        playlist = store.currentList.songs.map((song) => song.youTubeId);
+    if (store.playingList) {
+        playlist = store.playingList.songs.map((song) => song.youTubeId);
     }
 
     // THIS FUNCTION LOADS THE CURRENT SONG INTO
