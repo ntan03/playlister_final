@@ -7,7 +7,8 @@ function AddSongCard(props) {
     const { store } = useContext(GlobalStoreContext);
     const { playingList } = props;
 
-    function handleAddNewSong() {
+    function handleAddNewSong(event) {
+        event.stopPropagation();
         store.addNewSong();
     }
 

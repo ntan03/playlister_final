@@ -364,12 +364,12 @@ updatePlaylist = async (req, res) => {
 
 
     let playlist = await Playlist.findById({ _id: req.params.id });
-    console.log("playlist found: " + JSON.stringify(playlist));
     if (!playlist) {
         return res.status(404).json({
             message: 'Playlist not found!',
         })
     }
+    console.log(`Playlist ${req.params.id} found...`);
 
     if (playlist.published) {
         let likes = JSON.stringify(playlist.likes);
@@ -387,6 +387,8 @@ updatePlaylist = async (req, res) => {
             })
         }
     }
+
+    console.log('Can update playlist...');
 
     // DOES THIS LIST BELONG TO THIS USER?
     async function asyncFindUser(list) {
@@ -446,7 +448,7 @@ updatePlaylist = async (req, res) => {
             }
         });
     }
-    if (!duplicateFound) asyncFindUser(playlist);
+    asyncFindUser(playlist);
 }
 module.exports = {
     createPlaylist,

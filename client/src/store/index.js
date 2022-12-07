@@ -1083,6 +1083,7 @@ function GlobalStoreContextProvider(props) {
     }
     store.updateCurrentList = function() {
         async function asyncUpdateCurrentList() {
+            console.log('Updating current list: ', store.currentList);
             const response = await api.updatePlaylistById(store.currentList._id, store.currentList);
             if (response.data.success) {
                 let playlist = response.data.playlist;
