@@ -431,16 +431,26 @@ updatePlaylist = async (req, res) => {
                     })
             } else {
                 console.log("incorrect user!");
+                let oldComments = JSON.stringify(playlist.comments);
+                let newComments = JSON.stringify(body.playlist.comments);
+                let oldLikes = JSON.stringify(playlist.likes);
+                let newLikes = JSON.stringify(body.playlist.likes);
+                let oldDislikes = JSON.stringify(playlist.dislikes);
+                let newDislikes = JSON.stringify(body.playlist.dislikes);
                 // Guest has to be able to increment # of listens
-                if (playlist.listens !== body.playlist.listens) {
+                if (playlist.listens !== body.playlist.listens || oldComments !== newComments || oldLikes !== newLikes || oldDislikes !== newDislikes) {
+                    console.log('Another user either listened or left feedback')
                     playlist.listens = body.playlist.listens;
+                    playlist.comments = body.playlist.comments;
+                    playlist.likes = body.playlist.likes;
+                    playlist.dislikes = body.playlist.dislikes;
                     async function updateListens(playlist) {
                         listenedPlaylist = await playlist.save();
                         return res.status(200).json({
                             success: true,
                             id: listenedPlaylist._id,
                             playlist: listenedPlaylist,
-                            message: 'Playlist listens updated!',
+                            message: 'Other users have reacted or listened to playlist',
                         })
                     }
 

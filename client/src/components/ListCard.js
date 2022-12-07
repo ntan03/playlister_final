@@ -147,6 +147,11 @@ function ListCard(props) {
         store.updateLikes(idNamePair._id, -1);
     }
 
+    function handleTextClick(event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
     let selectClass = "unselected-list-card";
     if (selected) {
         selectClass = "selected-list-card";
@@ -220,6 +225,7 @@ function ListCard(props) {
                 name="name"
                 autoComplete="Playlist Name"
                 className='list-card'
+                onClick={handleTextClick}
                 onKeyPress={handleKeyPress}
                 onChange={handleUpdateText}
                 defaultValue={idNamePair.name}

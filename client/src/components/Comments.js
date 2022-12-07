@@ -30,8 +30,10 @@ function Comments() {
         listComments = 
             <List sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', overflow: 'auto', bgcolor: '#e3e3e3', height: '84%' }}>
                 {
-                    store.playingList.comments.map((comment) => (
-                        <ListItem sx={{ display: 'flex', flexDirection: 'column', width: '90%', borderRadius:"10px", p: "10px", bgcolor: 'background.paper', alignItems: 'start', margin: 1 }}>
+                    store.playingList.comments.map((comment, index) => (
+                        <ListItem 
+                            key={'comment-card-' + index}
+                            sx={{ display: 'flex', flexDirection: 'column', width: '90%', borderRadius:"10px", p: "10px", bgcolor: 'background.paper', alignItems: 'start', margin: 1 }}>
                             <Box>
                                 <Typography variant='subtitle1' >
                                     {comment.username}

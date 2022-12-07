@@ -540,15 +540,15 @@ function GlobalStoreContextProvider(props) {
                     response = await api.updatePlaylistById(playlist._id, playlist);
                     if (response.data.success) {
                         async function getListPairs(playlist) {
-                            response = await api.getPlaylistPairs();
+                            response = await api.getAllPairs();
                             if (response.data.success) {
                                 let originalPairs = store.idNamePairs;
                                 let ids = originalPairs.map((pair) => pair._id);
 
                                 let pairsArray = response.data.idNamePairs;
                                 console.log('Updated likes/dislike:');
-                                pairsArray = pairsArray.filter((pair) => ids.includes(pair._id))
                                 console.log('Pairs received: ', pairsArray)
+                                pairsArray = pairsArray.filter((pair) => ids.includes(pair._id))
                                 pairsArray = store.sortPairs(store.sort, pairsArray);
                                 storeReducer({
                                     type: GlobalStoreActionType.LIKE_DISLIKE_LIST,
