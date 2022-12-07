@@ -65,7 +65,8 @@ function ListCard(props) {
 
     function handleClick(event) {
         if (event.detail == 1) {
-            store.setPlayingList(idNamePair._id);
+            if (store.playingList && store.playingList._id === idNamePair._id) store.closePlayingList();
+            else store.setPlayingList(idNamePair._id);
         } else if (event.detail == 2) {
             if (auth.user) handleToggleEdit(event);
         }
@@ -269,7 +270,7 @@ function ListCard(props) {
                 </Box>
                 <Box sx={{ p: 1, display: 'flex', justifyContent: 'flex-end', flexDirection: 'row', gridRow: '2/3', gridColumn: '2/3' }}>
                     <div className="list-details">
-                        Listens: {idNamePair.listens}
+                        {(idNamePair.published) ? "Listens: " + idNamePair.listens : null}
                     </div>
                     <Box sx={{}}>
                         <IconButton aria-label='expand' onClick={(event) => {
