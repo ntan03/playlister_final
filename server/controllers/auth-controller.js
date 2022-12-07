@@ -1,6 +1,7 @@
 const auth = require('../auth')
 const User = require('../models/user-model')
 const bcrypt = require('bcryptjs')
+const { uuid } = require('uuidv4');
 
 getLoggedIn = async (req, res) => {
     try {
@@ -85,6 +86,20 @@ loginUser = async (req, res) => {
         console.error(err);
         res.status(500).send();
     }
+}
+
+continueAsGuest = async (req, res) => {
+    // SIGN TOKEN SO USER CAN CONTINUE AS GUEST
+    const token = auth.signToken(uuid());
+    console.log(token);
+
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: true
+    }).status(200).json({
+        success: true
+    })
 }
 
 logoutUser = async (req, res) => {
@@ -196,5 +211,6 @@ module.exports = {
     getLoggedIn,
     registerUser,
     loginUser,
+    continueAsGuest,
     logoutUser
 }

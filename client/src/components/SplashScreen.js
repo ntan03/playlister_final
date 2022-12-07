@@ -1,3 +1,5 @@
+import { useContext } from 'react';
+import AuthContext from '../auth'
 import { Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -15,6 +17,11 @@ const style = {
 };
 
 export default function SplashScreen() {
+    const { auth } = useContext(AuthContext);
+
+    function handleGuest() {
+        auth.continueGuest();
+    }
     return (
         <div id="splash-screen">
             <div id="playlister">
@@ -39,7 +46,7 @@ export default function SplashScreen() {
                     </Button>
                 </Link>
                 <Box sx={{ gridRow: '3/4' }}>
-                    <Button sx={{ width: 200 }}>
+                    <Button sx={{ width: 200 }} onClick={handleGuest}>
                         Continue as Guest
                     </Button>
                 </Box>

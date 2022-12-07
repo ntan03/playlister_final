@@ -26,7 +26,7 @@ import Songs from './Songs';
 function ListCard(props) {
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
-    const [editActive, setEditActive] = useState(false);
+    const [ editActive, setEditActive ] = useState(false);
     const [ text, setText ] = useState("");
     const [ expanded, setExpanded ] = useState(false);
     const [ like, setLike ] = useState(false);
@@ -39,10 +39,10 @@ function ListCard(props) {
         if (store.currentList && store.currentList._id === idNamePair._id) setExpanded(true);
         else setExpanded(false);
 
-        if (idNamePair.likes.includes(auth.user.userName)) setLike(true);
+        if (auth.user && idNamePair.likes.includes(auth.user.userName)) setLike(true);
         else setLike(false);
 
-        if (idNamePair.dislikes.includes(auth.user.userName)) setDislike(true);
+        if (auth.user && idNamePair.dislikes.includes(auth.user.userName)) setDislike(true);
         else setDislike(false);
     }, [store.currentList])
 
@@ -67,7 +67,7 @@ function ListCard(props) {
         if (event.detail == 1) {
             store.setPlayingList(idNamePair._id);
         } else if (event.detail == 2) {
-            handleToggleEdit(event);
+            if (auth.user) handleToggleEdit(event);
         }
     }
 
@@ -156,6 +156,13 @@ function ListCard(props) {
         cardStatus = true;
     }
 
+    let bgcolor = '#cdcdcd';
+    let textColor = '#000000';
+    if (store.playingList && idNamePair._id === store.playingList._id) {
+        bgcolor = '#948cee';
+        textColor = '#ffffff'
+    }
+
     let likeButton = <ThumbUpIcon style={{fontSize:'24pt'}} />;
     if (like) likeButton = <ThumbUpIcon style={{fontSize:'24pt', color: '#35bcfc'}} />
 
@@ -169,24 +176,24 @@ function ListCard(props) {
 
     let undoButton = '' 
     if (!idNamePair.published) {
-        undoButton = <Button variant="text" onClick={(event) => {handleUndo(event);}}>Undo</Button>;
+        undoButton = <Button variant="text" sx={{ color: textColor }} onClick={(event) => {handleUndo(event);}}>Undo</Button>;
     }
 
     let redoButton = ''
     if (!idNamePair.published) {
-        redoButton = <Button variant="text" onClick={(event) => {handleRedo(event);}}>Redo</Button>;
+        redoButton = <Button variant="text" sx={{ color: textColor }} onClick={(event) => {handleRedo(event);}}>Redo</Button>;
     }
 
     let deleteList = '';
     if (store.page === 0) {
-        deleteList = <Button variant="text" onClick={(event) => { handleDeleteList(event, idNamePair._id); }}>
+        deleteList = <Button variant="text" sx={{ color: textColor }} onClick={(event) => { handleDeleteList(event, idNamePair._id); }}>
             Delete
         </Button>;
     }
 
     let publish = '';
     if (!idNamePair.published) {
-        publish = <Button variant="text" onClick={(event) => { handlePublish(event); }}>
+        publish = <Button variant="text" sx={{ color: textColor }} onClick={(event) => { handlePublish(event); }}>
             Publish
         </Button>;
     }
@@ -198,6 +205,9 @@ function ListCard(props) {
                 Publish Date: {(new Date(idNamePair.publishDate)).toLocaleDateString('en-us', { year:"numeric", month:"short", day:"numeric"})}
             </div>
     }
+
+    let duplicate = '';
+    if (auth.user) duplicate = <Button variant="text" sx={{ color: textColor }} onClick={(event) => {handleDuplicate(event)} }>Duplicate</Button>
 
     let playlistName = idNamePair.name;
     if (editActive) {
@@ -224,7 +234,7 @@ function ListCard(props) {
             <ListItem
                 id={idNamePair._id}
                 key={idNamePair._id}
-                sx={{borderRadius:"25px", p: "5px", bgcolor: '#cdcdcd', display: 'grid', gridTemplateRows: '33% 33% 33%', gridTemplateColumns: '55% 45%' }}
+                sx={{borderRadius:"25px", p: "5px", bgcolor: bgcolor, color: textColor, display: 'grid', gridTemplateRows: '33% 33% 33%', gridTemplateColumns: '55% 45%' }}
                 style={{transform:"translate(1%,0%)", width: '98%', height: '100%'}}
                 onClick={handleClick}
             >
@@ -239,13 +249,13 @@ function ListCard(props) {
                 </Box>
                 <Box sx={{ p: 1, display: 'flex', justifyContent: 'flex-end', flexDirection: 'row', gridRow: '1/2', gridColumn: '2/3'}}>
                     <Box sx={{ p: 1 }}>
-                        <IconButton aria-label='like' onClick={(event) => {handleLike(event)}}>
+                        <IconButton aria-label='like' onClick={(event) => {handleLike(event)}} disabled={auth.guest}>
                             { (idNamePair.published) ? likeButton : null }
                         </IconButton>
                         {(idNamePair.published) ? idNamePair.likes.length : null}
                     </Box>
                     <Box sx={{ p: 1 }}>
-                        <IconButton aria-label='dislike' onClick={(event) => {handleDislike(event)}}>
+                        <IconButton aria-label='dislike' onClick={(event) => {handleDislike(event)}} disabled={auth.guest}>
                             { (idNamePair.published) ? dislikeButton : null}
                         </IconButton>
                         { (idNamePair.published) ? idNamePair.dislikes.length : null}
@@ -265,7 +275,7 @@ function ListCard(props) {
                 </Box>
                 <Collapse sx={{gridColumn: '1/3'}} in={expanded} timeout="auto" unmountOnExit>
                     <Box sx={{ gridColumn: '1/3', width: '100%', textAlign: 'center' }}>
-                        <Songs published={idNamePair.published}/>
+                        <Songs published={idNamePair.published} playingList={store.playingList && idNamePair._id === store.playingList._id}/>
                         <Box sx={{ p: 1, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                             <Box>
                                 {undoButton}
@@ -274,7 +284,7 @@ function ListCard(props) {
                             <Box>
                                 {deleteList}
                                 {publish}
-                                <Button variant="text" onClick={(event) => {handleDuplicate(event)} }>Duplicate</Button>
+                                {duplicate}
                             </Box>
                         </Box>
                     </Box>

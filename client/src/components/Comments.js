@@ -10,6 +10,7 @@ import TextField from '@mui/material/TextField';
 
 function Comments() {
     const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext);
     const [ comment, setComment ] = useState('');
 
     function handleChange(event) {
@@ -37,8 +38,8 @@ function Comments() {
                                 </Typography>
                             </Box>
 
-                            <Box>
-                                <Typography variant='h5'>
+                            <Box sx={{width: '95%'}}>
+                                <Typography variant='h5' sx={{wordWrap: 'break-word'}}>
                                     {comment.comment}
                                 </Typography>
                             </Box>
@@ -51,7 +52,7 @@ function Comments() {
 
     let textBox = '';
     if (store.playingList && store.playingList.published) {
-        textBox = 
+        textBox = (auth.user) ?
             <TextField
                 id="outlined-textarea"
                 placeholder="Comment here"
@@ -59,6 +60,19 @@ function Comments() {
                 rows={1}
                 multiline
                 fullWidth
+                value={comment}
+                onChange={handleChange}
+                onKeyPress={handleKeyPress}
+            />
+            :
+            <TextField
+                id="outlined-textarea"
+                placeholder="Comment disabled"
+                maxRows={1}
+                rows={1}
+                multiline
+                fullWidth
+                disabled
                 value={comment}
                 onChange={handleChange}
                 onKeyPress={handleKeyPress}

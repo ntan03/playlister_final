@@ -9,7 +9,7 @@ import { GlobalStoreContext } from '../store/index.js'
 
 function Songs(props) {
     const { store } = useContext(GlobalStoreContext);
-    const { published } = props;
+    const { published, playingList } = props;
     store.history = useHistory();
 
     console.log('PLAYLIST STATUS: ', published);
@@ -28,7 +28,7 @@ function Songs(props) {
         let temp = [...store.currentList.songs]
         if (!published) temp.push('Add List')
         list =
-            <List sx={{overflow: 'auto', maxHeight: 300, bgcolor: '#cdcdcd' }}>
+            <List sx={{overflow: 'auto', maxHeight: 300, bgcolor: (!playingList) ? '#cdcdcd' : '#948cee' }}>
                 {
                     temp.map((song, index) => (
                         (song !== 'Add List') ?
@@ -38,11 +38,12 @@ function Songs(props) {
                             index={index}
                             song={song}
                             published={published}
+                            playingList={playingList}
                         /> 
                         :
                         <AddSongCard 
                             key={'playlist-song-' + (index)}
-                            index={index}
+                            playingList={playingList}
                         />
                     ))
                 }

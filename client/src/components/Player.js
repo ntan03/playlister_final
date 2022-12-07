@@ -118,7 +118,7 @@ function Player() {
 
     let song_num = '';
     if (playlist && songs[index]) {
-        song_num = <Typography variant='h5' sx={{ margin: 'auto' }}>Song #: {index}</Typography>
+        song_num = <Typography variant='h5' sx={{ margin: 'auto' }}>Song #: {index + 1}</Typography>
     }
 
     let songTitle = '';

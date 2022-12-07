@@ -10,7 +10,8 @@ export const AuthActionType = {
     GET_LOGGED_IN: "GET_LOGGED_IN",
     LOGIN_USER: "LOGIN_USER",
     LOGOUT_USER: "LOGOUT_USER",
-    REGISTER_USER: "REGISTER_USER"
+    REGISTER_USER: "REGISTER_USER",
+    GUEST: "GUEST"
 }
 
 function AuthContextProvider(props) {
@@ -23,6 +24,7 @@ function AuthContextProvider(props) {
     const history = useHistory();
 
     useEffect(() => {
+        console.log('Attempt to log in upon refresh')
         auth.getLoggedIn();
     }, []);
 
@@ -33,6 +35,7 @@ function AuthContextProvider(props) {
                 return setAuth({
                     user: payload.user,
                     loggedIn: payload.loggedIn,
+                    guest: false,
                     errorMessage: null
                 });
             }
@@ -40,6 +43,7 @@ function AuthContextProvider(props) {
                 return setAuth({
                     user: payload.user,
                     loggedIn: payload.loggedIn,
+                    guest: false,
                     errorMessage: payload.errorMessage
                 })
             }
@@ -47,6 +51,7 @@ function AuthContextProvider(props) {
                 return setAuth({
                     user: null,
                     loggedIn: false,
+                    guest: false,
                     errorMessage: null
                 })
             }
@@ -54,7 +59,16 @@ function AuthContextProvider(props) {
                 return setAuth({
                     user: payload.user,
                     loggedIn: payload.loggedIn,
+                    guest: false,
                     errorMessage: payload.errorMessage
+                })
+            }
+            case AuthActionType.GUEST: {
+                return setAuth({
+                    user: null,
+                    loggedIn: false,
+                    guest: true,
+                    errorMessage: null
                 })
             }
             default:
@@ -129,6 +143,19 @@ function AuthContextProvider(props) {
                     errorMessage: error.response.data.errorMessage
                 }
             })
+        }
+    }
+
+    auth.continueGuest = async function() {
+        console.log('Continuing as guest...');
+        const response = await api.continueAsGuest();
+        if (response.status === 200) {
+            authReducer({
+                type: AuthActionType.GUEST,
+                payload: null
+            })
+
+            history.push("/");
         }
     }
 

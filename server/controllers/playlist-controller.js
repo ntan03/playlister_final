@@ -99,11 +99,11 @@ deletePlaylist = async (req, res) => {
 }
 
 getPlaylistById = async (req, res) => {
-    if(auth.verifyUser(req) === null){
-        return res.status(400).json({
-            errorMessage: 'UNAUTHORIZED'
-        })
-    }
+    // if(auth.verifyUser(req) === null){
+    //     return res.status(400).json({
+    //         errorMessage: 'UNAUTHORIZED'
+    //     })
+    // }
     console.log("Find Playlist with id: " + JSON.stringify(req.params.id));
 
     await Playlist.findById({ _id: req.params.id }, (err, list) => {
@@ -111,23 +111,24 @@ getPlaylistById = async (req, res) => {
             return res.status(400).json({ success: false, error: err });
         }
         console.log("Found list: " + JSON.stringify(list));
+        return res.status(200).json({ success: true, playlist: list })
 
         // DOES THIS LIST BELONG TO THIS USER?
-        async function asyncFindUser(list) {
-            await User.findOne({ email: list.ownerEmail }, (err, user) => {
-                console.log("user._id: " + user._id);
-                console.log("req.userId: " + req.userId);
-                if (user._id == req.userId) {
-                    console.log("correct user!");
-                    return res.status(200).json({ success: true, playlist: list })
-                }
-                else {
-                    console.log("incorrect user!");
-                    return res.status(400).json({ success: false, description: "authentication error" });
-                }
-            });
-        }
-        asyncFindUser(list);
+        // async function asyncFindUser(list) {
+        //     await User.findOne({ email: list.ownerEmail }, (err, user) => {
+        //         console.log("user._id: " + user._id);
+        //         console.log("req.userId: " + req.userId);
+        //         if (user._id == req.userId) {
+        //             console.log("correct user!");
+        //             return res.status(200).json({ success: true, playlist: list })
+        //         }
+        //         else {
+        //             console.log("incorrect user!");
+        //             return res.status(400).json({ success: false, description: "authentication error" });
+        //         }
+        //     });
+        // }
+        // asyncFindUser(list);
     }).catch(err => console.log(err))
 }
 
@@ -163,6 +164,8 @@ getPlaylistPairs = async (req, res) => {
                             _id: list._id,
                             name: list.name,
                             published: list.published,
+                            createDate: list.createdAt,
+                            editDate: list.updatedAt,
                             publishDate: list.publishDate,
                             listOwner: list.ownerUsername,
                             likes: list.likes,
@@ -180,11 +183,6 @@ getPlaylistPairs = async (req, res) => {
 }
 
 getPlaylists = async (req, res) => {
-    if(auth.verifyUser(req) === null){
-        return res.status(400).json({
-            errorMessage: 'UNAUTHORIZED'
-        })
-    }
     await Playlist.find({ published: true }, (err, playlists) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
@@ -197,6 +195,8 @@ getPlaylists = async (req, res) => {
                 _id: list._id,
                 name: list.name,
                 published: list.published,
+                createDate: list.createdAt,
+                editDate: list.updatedAt,
                 publishDate: list.publishDate,
                 listOwner: list.ownerUsername,
                 likes: list.likes,
@@ -210,11 +210,6 @@ getPlaylists = async (req, res) => {
 }
 
 getAllPlaylists = async (req, res) => {
-    if(auth.verifyUser(req) === null){
-        return res.status(400).json({
-            errorMessage: 'UNAUTHORIZED'
-        })
-    }
     await Playlist.find({}, (err, playlists) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
@@ -227,6 +222,8 @@ getAllPlaylists = async (req, res) => {
                 _id: list._id,
                 name: list.name,
                 published: list.published,
+                createDate: list.createdAt,
+                editDate: list.updatedAt,
                 publishDate: list.publishDate,
                 listOwner: list.ownerUsername,
                 likes: list.likes,
@@ -258,6 +255,8 @@ searchCurrentUser = async (req, res) => {
                 _id: list._id,
                 name: list.name,
                 published: list.published,
+                createDate: list.createdAt,
+                editDate: list.updatedAt,
                 publishDate: list.publishDate,
                 listOwner: list.ownerUsername,
                 likes: list.likes,
@@ -271,12 +270,6 @@ searchCurrentUser = async (req, res) => {
 }
 
 searchAllPublished = async (req, res) => {
-    if(auth.verifyUser(req) === null){
-        return res.status(400).json({
-            errorMessage: 'UNAUTHORIZED'
-        })
-    }
-
     let name = req.query.name;
     name = name.toLowerCase();
     await Playlist.find({ name: { "$regex": name, "$options": "i" }, published: true }, (err, playlists) => {
@@ -287,6 +280,8 @@ searchAllPublished = async (req, res) => {
                 _id: list._id,
                 name: list.name,
                 published: list.published,
+                createDate: list.createdAt,
+                editDate: list.updatedAt,
                 publishDate: list.publishDate,
                 listOwner: list.ownerUsername,
                 likes: list.likes,
@@ -300,12 +295,6 @@ searchAllPublished = async (req, res) => {
 }
 
 searchUserPublished = async (req, res) => {
-    if(auth.verifyUser(req) === null){
-        return res.status(400).json({
-            errorMessage: 'UNAUTHORIZED'
-        })
-    }
-
     let user = req.query.user;
     user = user.toLowerCase();
     console.log('Searching for playlists with user substring: ', user)
@@ -317,6 +306,8 @@ searchUserPublished = async (req, res) => {
                 _id: list._id,
                 name: list.name,
                 published: list.published,
+                createDate: list.createdAt,
+                editDate: list.updatedAt,
                 publishDate: list.publishDate,
                 listOwner: list.ownerUsername,
                 likes: list.likes,
@@ -384,10 +375,12 @@ updatePlaylist = async (req, res) => {
         let likes = JSON.stringify(playlist.likes);
         let dislikes = JSON.stringify(playlist.dislikes);
         let comments = JSON.stringify(playlist.comments);
+        let listens = JSON.stringify(playlist.listens);
         let newLikes = JSON.stringify(body.playlist.likes);
         let newDislikes = JSON.stringify(body.playlist.dislikes);
         let newComments = JSON.stringify(body.playlist.comments);
-        if (likes === newLikes && dislikes === newDislikes && comments === newComments) {
+        let newListens = JSON.stringify(body.playlist.listens);
+        if (likes === newLikes && dislikes === newDislikes && comments === newComments && listens === newListens) {
             return res.status(401).json({
                 success: false,
                 error: 'The list has already been published.'
@@ -421,7 +414,7 @@ updatePlaylist = async (req, res) => {
                         console.log("SUCCESS!!!");
                         return res.status(200).json({
                             success: true,
-                            id: list._id,
+                            id: playlist._id,
                             playlist: playlist,
                             message: 'Playlist updated!',
                         })
@@ -433,10 +426,23 @@ updatePlaylist = async (req, res) => {
                             message: 'Playlist not updated!',
                         })
                     })
-            }
-            else {
+            } else {
                 console.log("incorrect user!");
-                return res.status(400).json({ success: false, description: "authentication error" });
+                // Guest has to be able to increment # of listens
+                if (playlist.listens !== body.playlist.listens) {
+                    playlist.listens = body.playlist.listens;
+                    async function updateListens(playlist) {
+                        listenedPlaylist = await playlist.save();
+                        return res.status(200).json({
+                            success: true,
+                            id: listenedPlaylist._id,
+                            playlist: listenedPlaylist,
+                            message: 'Playlist listens updated!',
+                        })
+                    }
+
+                    updateListens(playlist);
+                } else return res.status(400).json({ success: false, description: "authentication error" });
             }
         });
     }

@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { GlobalStoreContext } from '../store'
+import AuthContext from '../auth'
 import ListCard from './ListCard.js'
 import MUIDeleteModal from './MUIDeleteModal'
 import MUIListErrorModal from './MUIListErrorModal'
@@ -23,10 +24,16 @@ import Comments from './Comments'
 */
 const HomeScreen = () => {
     const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext);
     const [ tabIndex, setTabIndex ] = useState(0);
 
     useEffect(() => {
-        store.loadIdNamePairs(store.page);
+        if (auth.user) {
+            store.loadIdNamePairs(store.page)
+        } else if (store.page === 0) {
+            // Continued as guest, so no home screen
+            store.loadIdNamePairs(1);
+        } else store.loadIdNamePairs(store.page)
     }, []);
 
     // function handleCreateNewList() {
@@ -82,14 +89,10 @@ const HomeScreen = () => {
             <Box sx={{ gridRow: '1/2', gridColumn: '1/3' }}>
                 <AppBanner />
             </Box>
-            <Box sx={{ gridRow: '2/3', gridColumn: '1/3' }}>
-                <CommunityBar />
-            </Box>
+            <CommunityBar />
 
             <Box sx={{ bgcolor:"background.paper", gridRow: '3/4', gridColumn: '1/2', display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
-                {
-                    listCard
-                }
+                {listCard}
                 <MUIDeleteModal />
             </Box>
 
