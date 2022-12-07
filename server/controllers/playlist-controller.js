@@ -110,7 +110,7 @@ getPlaylistById = async (req, res) => {
         if (err) {
             return res.status(400).json({ success: false, error: err });
         }
-        console.log("Found list: " + JSON.stringify(list));
+        // console.log("Found list: " + JSON.stringify(list));
         return res.status(200).json({ success: true, playlist: list })
 
         // DOES THIS LIST BELONG TO THIS USER?
@@ -142,7 +142,6 @@ getPlaylistPairs = async (req, res) => {
     await User.findOne({ _id: req.userId }, (err, user) => {
         console.log("find user with id " + req.userId);
         async function asyncFindList(email) {
-            console.log("find all Playlists owned by " + email);
             await Playlist.find({ ownerEmail: email }, (err, playlists) => {
                 // console.log("found Playlists: " + JSON.stringify(playlists));
                 if (err) {
@@ -232,7 +231,7 @@ getAllPlaylists = async (req, res) => {
             };
             pairs.push(pair);
         }
-        console.log('RETURNING ALL PAIRS!')
+        // console.log('RETURNING ALL PAIRS!')
         return res.status(200).json({ success: true, idNamePairs: pairs })
     }).catch(err => console.log(err))
 }
@@ -401,6 +400,8 @@ updatePlaylist = async (req, res) => {
 
                 list.name = body.playlist.name;
                 list.songs = body.playlist.songs;
+                console.log('Old songs: ', list.songs);
+                console.log('New Songs: ', body.playlist.songs);
                 // Ensures that list is only published at one date
                 if (!list.published && body.playlist.published) {
                     list.publishDate = new Date();

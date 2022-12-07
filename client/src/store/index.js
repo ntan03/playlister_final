@@ -1027,9 +1027,12 @@ function GlobalStoreContextProvider(props) {
     // THIS FUNCTION REMOVES THE SONG AT THE index LOCATION
     // FROM THE CURRENT LIST
     store.removeSong = function(index) {
+        console.log('REMOVING SONG FROM LIST!!! INDEX ' + index)
         let list = store.currentList;      
         list.songs.splice(index, 1); 
 
+        console.log('List: ', list);
+        console.log('Current List: ', list);
         // NOW MAKE IT OFFICIAL
         store.updateCurrentList();
     }
@@ -1088,6 +1091,7 @@ function GlobalStoreContextProvider(props) {
             if (response.data.success) {
                 let playlist = response.data.playlist;
                 // TODO: Modify playingList states depending on update
+                console.log('After updating playlist: ', playlist);
                 storeReducer({
                     type: GlobalStoreActionType.SET_CURRENT_LIST,
                     payload: {

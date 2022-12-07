@@ -28,7 +28,8 @@ export default function MUIEditSongModal() {
     const [ artist, setArtist ] = useState(store.currentSong.artist);
     const [ youTubeId, setYouTubeId ] = useState(store.currentSong.youTubeId);
 
-    function handleConfirmEditSong() {
+    function handleConfirmEditSong(event) {
+        event.stopPropagation();
         let newSongData = {
             title: title,
             artist: artist,
@@ -37,7 +38,8 @@ export default function MUIEditSongModal() {
         store.addUpdateSongTransaction(store.currentSongIndex, newSongData);        
     }
 
-    function handleCancelEditSong() {
+    function handleCancelEditSong(event) {
+        event.stopPropagation();
         store.hideModals();
     }
 
